@@ -36,21 +36,7 @@ func (u *User) HashPassword() []byte {
 	return hfp
 }
 
-func (u *User) Save(db *sql.DB) *sql.Rows {
-	p := u.HashPassword()
-	rows, err := db.Query(`
-		INSERT INTO users (id, name, username, type, password)
-		VALUES ($1, $2, $3, $4, $5)
-	`, u.ID, u.Name, u.Username, u.Type, p)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return rows
-}
-
-func (u *User) SaveWithGorm(db *gorm.DB) {
+func (u *User) Save(db *gorm.DB) {
 	p := u.HashPassword()
 	db.Table("users").Create(&User{
 		u.ID,
@@ -59,7 +45,6 @@ func (u *User) SaveWithGorm(db *gorm.DB) {
 		u.Type,
 		p,
 	})
-	// defer db.Close()
 }
 
 func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {

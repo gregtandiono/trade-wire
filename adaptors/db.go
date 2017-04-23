@@ -1,15 +1,18 @@
 package adaptors
 
 import (
-	"database/sql"
+	"github.com/jinzhu/gorm"
 
-	// pq is just used for a driver that's why it's left blank
-	_ "github.com/lib/pq"
+	// postgres driver for gorm
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// DBConnector is just compartmentalized db adaptor
-func DBConnector() (db *sql.DB) {
-	db, err := sql.Open("postgres", "user=postgres password=04120080090 dbname=trade_wire sslmode=disable")
+// DBConnector {()} gorm db adaptor
+func DBConnector() *gorm.DB {
+	db, err := gorm.Open(
+		"postgres",
+		"host=localhost user=postgres dbname=trade_wire sslmode=disable password=04120080090",
+	)
 	if err != nil {
 		panic(err)
 	}

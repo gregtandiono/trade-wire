@@ -10,8 +10,7 @@ import (
 )
 
 func main() {
-	// db := adaptors.DBConnector()
-	dbg := adaptors.DBConnectorWithGorm()
+	db := adaptors.DBConnector()
 	u := models.NewUser(
 		uuid.NewV4(),
 		"gregory tandiono",
@@ -20,8 +19,7 @@ func main() {
 		[]byte("password"),
 	)
 
-	// u.Save(db)
-	u.SaveWithGorm(dbg)
+	u.Save(db)
 
 	fmt.Printf("great success")
 }
