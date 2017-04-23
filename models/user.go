@@ -5,17 +5,19 @@ import (
 
 	"database/sql"
 
+	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
 
 // User model
 type User struct {
-	ID                             uuid.UUID
-	Name, Username, Type, Password string
+	ID                   uuid.UUID
+	Name, Username, Type string
+	Password             []byte
 }
 
 // NewUser {u} is an instance of user struct
-func NewUser(id uuid.UUID, name, username, t, password string) *User {
+func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
 	return &User{
 		ID:       id,
 		Name:     name,
@@ -26,8 +28,7 @@ func NewUser(id uuid.UUID, name, username, t, password string) *User {
 }
 
 func (u *User) HashPassword() []byte {
-	password := []byte(u.Password)
-	hfp, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	hfp, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +37,6 @@ func (u *User) HashPassword() []byte {
 }
 
 func (u *User) Save(db *sql.DB) *sql.Rows {
-
 	p := u.HashPassword()
 	rows, err := db.Query(`
 		INSERT INTO users (id, name, username, type, password)
@@ -48,6 +48,18 @@ func (u *User) Save(db *sql.DB) *sql.Rows {
 	}
 
 	return rows
+}
+
+func (u *User) SaveWithGorm(db *gorm.DB) {
+	p := u.HashPassword()
+	db.Table("users").Create(&User{
+		u.ID,
+		u.Name,
+		u.Username,
+		u.Type,
+		p,
+	})
+	// defer db.Close()
 }
 
 func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {

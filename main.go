@@ -10,16 +10,18 @@ import (
 )
 
 func main() {
-	db := adaptors.DBConnector()
+	// db := adaptors.DBConnector()
+	dbg := adaptors.DBConnectorWithGorm()
 	u := models.NewUser(
 		uuid.NewV4(),
 		"gregory tandiono",
 		"gtandiono",
 		"admin",
-		"password",
+		[]byte("password"),
 	)
 
-	u.Save(db)
+	// u.Save(db)
+	u.SaveWithGorm(dbg)
 
 	fmt.Printf("great success")
 }
