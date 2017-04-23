@@ -1,18 +1,21 @@
 package main
 
 import (
-	"database/sql"
+	"fmt"
 
-	_ "github.com/lib/pq"
+	"bitbucket.com/gregtandiono_/trade-wire/models"
+	uuid "github.com/satori/go.uuid"
 )
 
 func main() {
-}
-
-func dbConnector() (db *sql.DB) {
-	db, err := sql.Open("postgres", "user=postgres password=04120080090 dbname=trade_wire sslmode=verify-full")
-	if err != nil {
-		panic(err)
+	u := &models.User{
+		ID:       uuid.NewV4(),
+		Name:     "gregory tandiono",
+		Username: "gtandiono",
+		Type:     "admin",
+		Password: "password",
 	}
-	return db
+
+	models.NewUser(u)
+	fmt.Printf("great success")
 }

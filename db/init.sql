@@ -127,10 +127,10 @@ CREATE TABLE IF NOT EXISTS trades(
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
-    FOREIGN KEY supplier_id REFERENCES suppliers (id),
-    FOREIGN KEY buyer_id REFERENCES buyers (id),
-    FOREIGN KEY commodity_id REFERENCES commodities (id),
-    FOREIGN KEY variety_id REFERENCES varieties (id)
+    FOREIGN KEY (supplier_id) REFERENCES suppliers (id),
+    FOREIGN KEY (buyer_id) REFERENCES buyers (id),
+    FOREIGN KEY (commodity_id) REFERENCES commodities (id),
+    FOREIGN KEY (variety_id) REFERENCES varieties (id)
 );
 
 CREATE TRIGGER update_modified_column
@@ -150,8 +150,8 @@ CREATE TABLE IF NOT EXISTS contacts(
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
-    FOREIGN KEY supplier_id REFERENCES suppliers (id),
-    FOREIGN KEY buyer_id REFERENCES buyers (id)
+    FOREIGN KEY (supplier_id) REFERENCES suppliers (id),
+    FOREIGN KEY (buyer_id) REFERENCES buyers (id)
 );
 
 CREATE TRIGGER update_modified_column
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS tracking(
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
-    FOREIGN KEY trade_id REFERENCES trades (id)
+    FOREIGN KEY (trade_id) REFERENCES trades (id)
 );
 
 CREATE TRIGGER update_modified_column
