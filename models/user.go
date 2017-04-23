@@ -1,11 +1,10 @@
 package models
 
 import (
-	"fmt"
-
 	"golang.org/x/crypto/bcrypt"
 
-	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
+	"database/sql"
+
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -16,10 +15,29 @@ type User struct {
 }
 
 // NewUser {u} is an instance of user struct
-func NewUser(u *User) {
+func NewUser(id uuid.UUID, name, username, t, password string) *User {
+	return &User{
+		ID:       id,
+		Name:     name,
+		Username: username,
+		Type:     t,
+		Password: password,
+	}
+}
 
-	db := adaptors.DBConnector()
-	p := u.hash()
+func (u *User) HashPassword() []byte {
+	password := []byte(u.Password)
+	hfp, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+
+	return hfp
+}
+
+func (u *User) Save(db *sql.DB) *sql.Rows {
+
+	p := u.HashPassword()
 	rows, err := db.Query(`
 		INSERT INTO users (id, name, username, type, password)
 		VALUES ($1, $2, $3, $4, $5)
@@ -29,15 +47,11 @@ func NewUser(u *User) {
 		panic(err)
 	}
 
-	fmt.Println(rows)
+	return rows
 }
 
-func (u *User) hash() []byte {
-	password := []byte(u.Password)
-	hfp, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
-	if err != nil {
-		panic(err)
-	}
+func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {
+}
 
-	return hfp
+func (u *User) Destroy(db *sql.DB) {
 }

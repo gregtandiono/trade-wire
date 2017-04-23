@@ -4,18 +4,22 @@ import (
 	"fmt"
 
 	"bitbucket.com/gregtandiono_/trade-wire/models"
+
+	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
 	uuid "github.com/satori/go.uuid"
 )
 
 func main() {
-	u := &models.User{
-		ID:       uuid.NewV4(),
-		Name:     "gregory tandiono",
-		Username: "gtandiono",
-		Type:     "admin",
-		Password: "password",
-	}
+	db := adaptors.DBConnector()
+	u := models.NewUser(
+		uuid.NewV4(),
+		"gregory tandiono",
+		"gtandiono",
+		"admin",
+		"password",
+	)
 
-	models.NewUser(u)
+	u.Save(db)
+
 	fmt.Printf("great success")
 }
