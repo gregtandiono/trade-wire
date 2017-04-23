@@ -47,6 +47,15 @@ func (u *User) Save(db *gorm.DB) {
 	})
 }
 
+func (u *User) FetchAll(db *gorm.DB) *sql.Rows {
+	rows, err := db.Find(u).Rows()
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	return rows
+}
+
 func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {
 }
 

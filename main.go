@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bitbucket.com/gregtandiono_/trade-wire/models"
+
 	"fmt"
 
-	"bitbucket.com/gregtandiono_/trade-wire/models"
+	"reflect"
 
 	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
 	uuid "github.com/satori/go.uuid"
@@ -20,6 +22,6 @@ func main() {
 	)
 
 	u.Save(db)
-
-	fmt.Printf("great success")
+	allUsers := u.FetchAll(db)
+	fmt.Println(reflect.TypeOf(allUsers))
 }
