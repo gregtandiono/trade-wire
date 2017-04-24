@@ -11,9 +11,11 @@ import (
 
 // User model
 type User struct {
-	ID                   uuid.UUID
-	Name, Username, Type string
-	Password             []byte
+	ID       uuid.UUID `json:"id"`
+	Name     string    `json:"name"`
+	Username string    `json:"username"`
+	Type     string    `json:"type"`
+	Password []byte    `json:"password"`
 }
 
 // NewUser {u} is an instance of user struct

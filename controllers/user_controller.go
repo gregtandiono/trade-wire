@@ -5,5 +5,15 @@ import (
 )
 
 type UserController struct {
-	database gorm.DB
+	database *gorm.DB
+}
+
+func NewUserController(database *gorm.DB) *UserController {
+	return &UserController{
+		database: database,
+	}
+}
+
+func (uc *UserController) Register() {
+
 }
