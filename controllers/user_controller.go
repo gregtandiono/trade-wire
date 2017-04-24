@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 
 	uuid "github.com/satori/go.uuid"
@@ -24,7 +22,11 @@ func NewUserController(database *gorm.DB) *UserController {
 }
 
 func (uc *UserController) Login(ctx *iris.Context) {
-	ctx.JSON(iris.StatusOK, map[string]string{"name": "gregory"})
+	var userLogin models.UserLogin
+	ctx.ReadJSON(&userLogin)
+	ul := models.NewUserLogin(userLogin.Username, userLogin.Password)
+	token := ul.Auth(uc.database)
+	ctx.JSON(iris.StatusOK, &token)
 }
 
 func (uc *UserController) FetchAll(ctx *iris.Context) {
@@ -33,7 +35,6 @@ func (uc *UserController) FetchAll(ctx *iris.Context) {
 }
 
 func (uc *UserController) Register(ctx *iris.Context) {
-	fmt.Printf("hello")
 	var user models.User
 	ctx.ReadJSON(&user)
 	u := models.NewUser(

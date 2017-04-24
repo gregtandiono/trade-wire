@@ -38,6 +38,13 @@ func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
 	}
 }
 
+func NewUserLogin(username string, password []byte) *UserLogin {
+	return &UserLogin{
+		Username: username,
+		Password: password,
+	}
+}
+
 // HashPassword hashes password field from incoming requests
 func (u *User) hashPassword() []byte {
 	hfp, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
@@ -81,11 +88,23 @@ func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {
 func (u *User) Destroy(db *sql.DB) {
 }
 
-func (ul *UserLogin) Auth(db *gorm.DB) {
+func (ul *UserLogin) Auth(db *gorm.DB) map[string]string {
+	user, err := ul.checkForUser(db)
+	if err != "" {
+		return map[string]string{
+			"error": err,
+		}
+	}
+
+	token := ul.generateToken()
+	return map[string]string{
+		"id":    uuid.UUID.String(user.ID),
+		"token": token,
+	}
 
 }
 
-func (u *UserLogin) generateToken() string {
+func (ul *UserLogin) generateToken() string {
 	var mySigningKey = []byte("supersecretkey")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
@@ -99,8 +118,14 @@ func (u *UserLogin) generateToken() string {
 	return tokenString
 }
 
-func (ul *UserLogin) checkForUser(db *gorm.DB) {
+func (ul *UserLogin) checkForUser(db *gorm.DB) (*User, string) {
+	// var data UserLogin
 	var user User
-	db.Find(&user, ul.Username)
-	fmt.Print(ul)
+	var err string
+	db.Table("users").Where("username = ?", ul.Username).Find(&user)
+	fmt.Print(user)
+	if user.Name == "" {
+		err = "user not found"
+	}
+	return &user, err
 }
