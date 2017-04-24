@@ -50,6 +50,10 @@ func (u *User) Save(db *gorm.DB) {
 	})
 }
 
+func (u *User) Login(db *gorm.DB) {
+
+}
+
 func (u *User) FetchAll(db *gorm.DB) *sql.Rows {
 	rows, err := db.Find(u).Rows()
 	if err != nil {
