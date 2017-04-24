@@ -30,6 +30,7 @@ func main() {
 	app.Use(customLogger)
 
 	app.Get("/login", controller.NewUserController(db).Login)
+	app.Get("/fetch", controller.NewUserController(db).FetchAll)
 	app.Post("/register", controller.NewUserController(db).Register)
 
 	app.Listen(":8080")

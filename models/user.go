@@ -27,6 +27,8 @@ type UserLogin struct {
 	Password []byte `json:"password"`
 }
 
+type UserResults struct{}
+
 // NewUser {u} is an instance of user struct
 func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
 	return &User{
@@ -60,16 +62,14 @@ func (u *User) Save(db *gorm.DB) {
 }
 
 func (u *User) Authorize(db *gorm.DB) {
-	u.checkForUser(db)
+	// u.checkForUser(db)
 }
 
-func (u *User) FetchAll(db *gorm.DB) *sql.Rows {
-	rows, err := db.Find(u).Rows()
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-	return rows
+func FetchAll(db *gorm.DB) {
+	// var results UserResults
+	var users []User
+	db.Find(&users)
+	fmt.Println(users)
 }
 
 func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {

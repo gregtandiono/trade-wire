@@ -27,6 +27,11 @@ func (uc *UserController) Login(ctx *iris.Context) {
 	ctx.JSON(iris.StatusOK, map[string]string{"name": "gregory"})
 }
 
+func (uc *UserController) FetchAll(ctx *iris.Context) {
+	models.FetchAll(uc.database)
+	ctx.JSON(iris.StatusOK, map[string]string{"status": "ok"})
+}
+
 func (uc *UserController) Register(ctx *iris.Context) {
 	fmt.Printf("hello")
 	var user models.User
