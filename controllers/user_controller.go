@@ -1,10 +1,15 @@
 package controller
 
 import (
-	"bitbucket.com/gregtandiono_/trade-wire/models"
+	"fmt"
+
 	"github.com/jinzhu/gorm"
+
 	uuid "github.com/satori/go.uuid"
+
+	"bitbucket.com/gregtandiono_/trade-wire/models"
 	"gopkg.in/kataras/iris.v6"
+	_ "gopkg.in/kataras/iris.v6/adaptors/httprouter"
 )
 
 // UserController struct serves as a initializer
@@ -18,7 +23,12 @@ func NewUserController(database *gorm.DB) *UserController {
 	}
 }
 
+func (uc *UserController) Login(ctx *iris.Context) {
+	ctx.HTML(iris.StatusOK, "<h1> Please click <a href='/debug/pprof'>here</a>")
+}
+
 func (uc *UserController) Register(ctx *iris.Context) {
+	fmt.Printf("hello")
 	var user models.User
 	ctx.ReadJSON(&user)
 	u := models.NewUser(
@@ -30,8 +40,4 @@ func (uc *UserController) Register(ctx *iris.Context) {
 	)
 	u.Save(uc.database)
 	ctx.JSON(iris.StatusOK, &user)
-}
-
-func (uc *UserController) Login(ctx *iris.Context) {
-
 }
