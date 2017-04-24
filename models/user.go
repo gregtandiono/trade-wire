@@ -1,12 +1,9 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
-
-	"database/sql"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
@@ -67,18 +64,17 @@ func (u *User) Save(db *gorm.DB) {
 }
 
 func FetchAllUsers(db *gorm.DB) []User {
-	// var results UserResults
 	var users []User
-	db.Select([]string{"id", "name", "username", "type"}).Find(&users)
+	db.Select([]string{"id", "name", "username", "type"}).Where("deleted_at is null").Find(&users)
 	return users
 }
 
 func (u *User) Update(db *gorm.DB) {
-	fmt.Print(u)
 	db.Table("users").Where("id = ?", u.ID).Updates(&u)
 }
 
-func (u *User) Destroy(db *sql.DB) {
+func (u *User) Delete(db *gorm.DB) {
+	db.Table("users").Where("id = ?", u.ID).Update("deleted_at", time.Now())
 }
 
 func (ul *UserLogin) Auth(db *gorm.DB) map[string]string {
@@ -127,7 +123,6 @@ func (ul *UserLogin) checkForUser(db *gorm.DB) (*User, string) {
 	var user User
 	var err string
 	db.Table("users").Where("username = ?", ul.Username).Find(&user)
-	fmt.Print(user)
 	if user.Name == "" {
 		err = "user not found"
 	}

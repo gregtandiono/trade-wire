@@ -43,6 +43,17 @@ func (uc *UserController) Update(ctx *iris.Context) {
 	ctx.JSON(iris.StatusOK, &user)
 }
 
+func (uc *UserController) Delete(ctx *iris.Context) {
+	var user models.User
+	ctx.ReadJSON(&user)
+	userID := ctx.Param("id")
+	user.ID = uuid.FromStringOrNil(userID)
+	user.Delete(uc.database)
+	ctx.JSON(iris.StatusOK, map[string]string{
+		"message": "record successfully deleted",
+	})
+}
+
 func (uc *UserController) Register(ctx *iris.Context) {
 	var user models.User
 	ctx.ReadJSON(&user)
