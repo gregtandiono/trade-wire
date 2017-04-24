@@ -1,27 +1,30 @@
 package main
 
 import (
-	"bitbucket.com/gregtandiono_/trade-wire/models"
-
-	"fmt"
-
-	"reflect"
+	controller "bitbucket.com/gregtandiono_/trade-wire/controllers"
+	iris "gopkg.in/kataras/iris.v6"
+	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 
 	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
-	uuid "github.com/satori/go.uuid"
 )
 
 func main() {
 	db := adaptors.DBConnector()
-	u := models.NewUser(
-		uuid.NewV4(),
-		"gregory tandiono",
-		"gtandiono",
-		"admin",
-		[]byte("password"),
-	)
+	// u := models.NewUser(
+	// 	uuid.NewV4(),
+	// 	"gregory tandiono",
+	// 	"gtandiono",
+	// 	"admin",
+	// 	[]byte("password"),
+	// )
 
-	u.Save(db)
-	allUsers := u.FetchAll(db)
-	fmt.Println(reflect.TypeOf(allUsers))
+	// u.Save(db)
+
+	app := iris.New()
+	app.Adapt(httprouter.New())
+
+	app.Post("/register", controller.NewUserController(db).Register)
+
+	app.Listen(":8080")
+
 }

@@ -29,6 +29,7 @@ func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
 	}
 }
 
+// HashPassword hashes password field from incoming requests
 func (u *User) HashPassword() []byte {
 	hfp, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
 	if err != nil {
