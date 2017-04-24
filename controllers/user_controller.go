@@ -28,8 +28,8 @@ func (uc *UserController) Login(ctx *iris.Context) {
 }
 
 func (uc *UserController) FetchAll(ctx *iris.Context) {
-	models.FetchAll(uc.database)
-	ctx.JSON(iris.StatusOK, map[string]string{"status": "ok"})
+	users := models.FetchAllUsers(uc.database)
+	ctx.JSON(iris.StatusOK, users)
 }
 
 func (uc *UserController) Register(ctx *iris.Context) {
