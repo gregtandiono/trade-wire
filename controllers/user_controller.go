@@ -24,7 +24,7 @@ func NewUserController(database *gorm.DB) *UserController {
 }
 
 func (uc *UserController) Login(ctx *iris.Context) {
-	ctx.HTML(iris.StatusOK, "<h1> Please click <a href='/debug/pprof'>here</a>")
+	ctx.JSON(iris.StatusOK, map[string]string{"name": "gregory"})
 }
 
 func (uc *UserController) Register(ctx *iris.Context) {

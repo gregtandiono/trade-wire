@@ -30,11 +30,7 @@ func main() {
 	app.Use(customLogger)
 
 	app.Get("/login", controller.NewUserController(db).Login)
-	// app.Get("/login", controller.NewUserController(db).Login)
-	// app.Get("/login", func(ctx *iris.Context) {
-	// 	ctx.HTML(iris.StatusForbidden, "<h1> Please click <a href='/debug/pprof'>here</a>")
-	// })
-	// app.Post("/register", controller.NewUserController(db).Register)
+	app.Post("/register", controller.NewUserController(db).Register)
 
 	app.Listen(":8080")
 
