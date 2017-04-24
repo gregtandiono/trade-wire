@@ -1,6 +1,8 @@
 package main
 
 import (
+	jwt "github.com/dgrijalva/jwt-go"
+	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
 	iris "gopkg.in/kataras/iris.v6"
 	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 	"gopkg.in/kataras/iris.v6/middleware/logger"
@@ -10,6 +12,7 @@ import (
 )
 
 func main() {
+
 	db := adaptors.DBConnector()
 
 	app := iris.New()
@@ -27,10 +30,18 @@ func main() {
 		Path: true,
 	})
 
+	// auth middleware auth
+	myJwtMiddleware := jwtmiddleware.New(jwtmiddleware.Config{
+		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+			return []byte("supersecretkey"), nil
+		},
+		SigningMethod: jwt.SigningMethodHS256,
+	})
+
 	app.Use(customLogger)
 
 	app.Post("/login", controller.NewUserController(db).Login)
-	app.Get("/fetch", controller.NewUserController(db).FetchAll)
+	app.Get("/fetch", myJwtMiddleware.Serve, controller.NewUserController(db).FetchAll)
 	app.Post("/register", controller.NewUserController(db).Register)
 
 	app.Listen(":8080")
