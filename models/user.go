@@ -77,11 +77,6 @@ func FetchAllUsers(db *gorm.DB) []User {
 	return users
 }
 
-// func (ur *UserResults) FetchAll(db *gorm.DB) {
-// 	var results []UserResults
-// 	db.Table("users").
-// }
-
 func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {
 }
 
@@ -95,7 +90,7 @@ func (ul *UserLogin) Auth(db *gorm.DB) map[string]string {
 func (ul *UserLogin) generateToken(id uuid.UUID) string {
 	var mySigningKey = []byte("supersecretkey")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+		"nbf": time.Now().Unix(),
 		"id":  id,
 	})
 
