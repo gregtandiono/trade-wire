@@ -41,6 +41,7 @@ func main() {
 	app.Use(customLogger)
 
 	app.Post("/login", controller.NewUserController(db).Login)
+	app.Put("/user/:id", controller.NewUserController(db).Update)
 	app.Get("/fetch", myJwtMiddleware.Serve, controller.NewUserController(db).FetchAll)
 	app.Post("/register", controller.NewUserController(db).Register)
 

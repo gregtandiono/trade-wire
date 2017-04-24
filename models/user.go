@@ -66,10 +66,6 @@ func (u *User) Save(db *gorm.DB) {
 	})
 }
 
-func (u *User) Authorize(db *gorm.DB) {
-	// u.checkForUser(db)
-}
-
 func FetchAllUsers(db *gorm.DB) []User {
 	// var results UserResults
 	var users []User
@@ -77,7 +73,9 @@ func FetchAllUsers(db *gorm.DB) []User {
 	return users
 }
 
-func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {
+func (u *User) Update(db *gorm.DB) {
+	fmt.Print(u)
+	db.Table("users").Where("id = ?", u.ID).Updates(&u)
 }
 
 func (u *User) Destroy(db *sql.DB) {
