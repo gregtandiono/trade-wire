@@ -1,13 +1,12 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
 	"database/sql"
-
-	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
@@ -21,6 +20,11 @@ type User struct {
 	Username string    `json:"username"`
 	Type     string    `json:"type"`
 	Password []byte    `json:"password"`
+}
+
+type UserLogin struct {
+	Username string `json:"username"`
+	Password []byte `json:"password"`
 }
 
 // NewUser {u} is an instance of user struct
@@ -74,7 +78,11 @@ func (u *User) Update(db *sql.DB, id uuid.UUID, ud *User) {
 func (u *User) Destroy(db *sql.DB) {
 }
 
-func (u *User) generateToken() string {
+func (ul *UserLogin) Auth(db *gorm.DB) {
+
+}
+
+func (u *UserLogin) generateToken() string {
 	var mySigningKey = []byte("supersecretkey")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
@@ -88,7 +96,8 @@ func (u *User) generateToken() string {
 	return tokenString
 }
 
-func (u *User) checkForUser(db *gorm.DB) {
-	db.Find(&u, "72b0afdf-e283-41a7-9f65-540b0095b62c")
-	fmt.Println(u.Name)
+func (ul *UserLogin) checkForUser(db *gorm.DB) {
+	var user User
+	db.Find(&user, ul.Username)
+	fmt.Print(ul)
 }
