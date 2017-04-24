@@ -25,8 +25,8 @@ func (uc *UserController) Login(ctx *iris.Context) {
 	var userLogin models.UserLogin
 	ctx.ReadJSON(&userLogin)
 	ul := models.NewUserLogin(userLogin.Username, userLogin.Password)
-	token := ul.Auth(uc.database)
-	ctx.JSON(iris.StatusOK, &token)
+	tokenObj := ul.Auth(uc.database)
+	ctx.JSON(iris.StatusOK, &tokenObj)
 }
 
 func (uc *UserController) FetchAll(ctx *iris.Context) {

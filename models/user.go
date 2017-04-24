@@ -89,25 +89,14 @@ func (u *User) Destroy(db *sql.DB) {
 }
 
 func (ul *UserLogin) Auth(db *gorm.DB) map[string]string {
-	user, err := ul.checkForUser(db)
-	if err != "" {
-		return map[string]string{
-			"error": err,
-		}
-	}
-
-	token := ul.generateToken()
-	return map[string]string{
-		"id":    uuid.UUID.String(user.ID),
-		"token": token,
-	}
-
+	return ul.checkPasswordAndGenerateTokenObject(db)
 }
 
-func (ul *UserLogin) generateToken() string {
+func (ul *UserLogin) generateToken(id uuid.UUID) string {
 	var mySigningKey = []byte("supersecretkey")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+		"id":  id,
 	})
 
 	tokenString, err := token.SignedString(mySigningKey)
@@ -116,6 +105,28 @@ func (ul *UserLogin) generateToken() string {
 	}
 
 	return tokenString
+}
+
+func (ul *UserLogin) checkPasswordAndGenerateTokenObject(db *gorm.DB) map[string]string {
+	user, err := ul.checkForUser(db)
+	if err != "" {
+		return map[string]string{
+			"error": err,
+		}
+	}
+	passErr := bcrypt.CompareHashAndPassword(user.Password, ul.Password)
+	if passErr != nil {
+		return map[string]string{
+			"error": "password does not match",
+		}
+	}
+
+	token := ul.generateToken(user.ID)
+
+	return map[string]string{
+		"id":    uuid.UUID.String(user.ID),
+		"token": token,
+	}
 }
 
 func (ul *UserLogin) checkForUser(db *gorm.DB) (*User, string) {
