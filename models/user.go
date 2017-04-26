@@ -71,9 +71,9 @@ func FetchAllUsers(db *gorm.DB) []User {
 
 // FetchOne model method to fetch one user
 // returns a map of one user
-func (u *User) FetchOne(db *gorm.DB) *User {
-	var user *User
-	db.First(&user, u.ID)
+func (u *User) FetchOne(db *gorm.DB) User {
+	var user User
+	db.Select([]string{"id", "name", "username", "type"}).Where("id = ?", u.ID).Find(&user)
 	return user
 }
 
