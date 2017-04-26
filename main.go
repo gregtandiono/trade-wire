@@ -46,6 +46,8 @@ func main() {
 	app.Delete("/user/:id", myJwtMiddleware.Serve, controller.NewUserController(db).Delete)
 	app.Get("/fetch", myJwtMiddleware.Serve, controller.NewUserController(db).FetchAll)
 
+	app.Post("/auth")
+
 	app.Listen(":8080")
 
 }
