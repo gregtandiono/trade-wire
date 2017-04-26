@@ -41,12 +41,18 @@ func main() {
 	app.Use(customLogger)
 
 	app.Post("/login", controller.NewUserController(db).Login)
-	app.Post("/register", controller.NewUserController(db).Register)
-	app.Put("/user/:id", myJwtMiddleware.Serve, controller.NewUserController(db).Update)
-	app.Delete("/user/:id", myJwtMiddleware.Serve, controller.NewUserController(db).Delete)
 	app.Get("/fetch", myJwtMiddleware.Serve, controller.NewUserController(db).FetchAll)
 
-	app.Post("/auth")
+	// WIP newly cleaned up endpoints
+
+	// Pre-app endpoints
+	app.Post("/auth", controller.NewUserController(db).Login)
+	app.Post("/register", controller.NewUserController(db).Register)
+
+	// user endpoints
+	app.Get("/user/:id", myJwtMiddleware.Serve, controller.NewUserController(db).FetchOne)
+	app.Put("/user/:id", myJwtMiddleware.Serve, controller.NewUserController(db).Update)
+	app.Delete("/user/:id", myJwtMiddleware.Serve, controller.NewUserController(db).Delete)
 
 	app.Listen(":8080")
 

@@ -69,10 +69,21 @@ func FetchAllUsers(db *gorm.DB) []User {
 	return users
 }
 
+// FetchOne model method to fetch one user
+// returns a map of one user
+func (u *User) FetchOne(db *gorm.DB) *User {
+	var user *User
+	db.First(&user, u.ID)
+	return user
+}
+
+// Update model method updates one user record
 func (u *User) Update(db *gorm.DB) {
 	db.Table("users").Where("id = ?", u.ID).Updates(&u)
 }
 
+// Delete model method soft deletes user record
+// it inserts a timestamp into the deleted_at column
 func (u *User) Delete(db *gorm.DB) {
 	db.Table("users").Where("id = ?", u.ID).Update("deleted_at", time.Now())
 }

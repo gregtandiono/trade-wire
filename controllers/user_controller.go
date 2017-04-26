@@ -34,6 +34,15 @@ func (uc *UserController) FetchAll(ctx *iris.Context) {
 	ctx.JSON(iris.StatusOK, users)
 }
 
+func (uc *UserController) FetchOne(ctx *iris.Context) {
+	var user models.User
+	ctx.ReadJSON(&user)
+	userID := ctx.Param("id")
+	user.ID = uuid.FromStringOrNil(userID)
+	ur := user.FetchOne(uc.database)
+	ctx.JSON(iris.StatusOK, ur)
+}
+
 func (uc *UserController) Update(ctx *iris.Context) {
 	var user models.User
 	ctx.ReadJSON(&user)
