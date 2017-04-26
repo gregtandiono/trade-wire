@@ -5,8 +5,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -52,7 +52,10 @@ func (u *User) hashPassword() []byte {
 	return hfp
 }
 
-func (u *User) Save(db *gorm.DB) {
+func (u *User) Save() {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
 	p := u.hashPassword()
 	db.Table("users").Create(&User{
 		u.ID,
@@ -63,7 +66,10 @@ func (u *User) Save(db *gorm.DB) {
 	})
 }
 
-func FetchAllUsers(db *gorm.DB) []User {
+func FetchAllUsers() []User {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
 	var users []User
 	db.Select([]string{"id", "name", "username", "type"}).Where("deleted_at is null").Find(&users)
 	return users
@@ -71,25 +77,32 @@ func FetchAllUsers(db *gorm.DB) []User {
 
 // FetchOne model method to fetch one user
 // returns a map of one user
-func (u *User) FetchOne(db *gorm.DB) User {
+func (u *User) FetchOne() User {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
 	var user User
 	db.Select([]string{"id", "name", "username", "type"}).Where("id = ?", u.ID).Find(&user)
 	return user
 }
 
 // Update model method updates one user record
-func (u *User) Update(db *gorm.DB) {
+func (u *User) Update() {
+	db := adaptors.DBConnector()
+	defer db.Close()
 	db.Table("users").Where("id = ?", u.ID).Updates(&u)
 }
 
 // Delete model method soft deletes user record
 // it inserts a timestamp into the deleted_at column
-func (u *User) Delete(db *gorm.DB) {
+func (u *User) Delete() {
+	db := adaptors.DBConnector()
+	defer db.Close()
 	db.Table("users").Where("id = ?", u.ID).Update("deleted_at", time.Now())
 }
 
-func (ul *UserLogin) Auth(db *gorm.DB) map[string]string {
-	return ul.checkPasswordAndGenerateTokenObject(db)
+func (ul *UserLogin) Auth() map[string]string {
+	return ul.checkPasswordAndGenerateTokenObject()
 }
 
 func (ul *UserLogin) generateToken(id uuid.UUID) string {
@@ -107,8 +120,10 @@ func (ul *UserLogin) generateToken(id uuid.UUID) string {
 	return tokenString
 }
 
-func (ul *UserLogin) checkPasswordAndGenerateTokenObject(db *gorm.DB) map[string]string {
-	user, err := ul.checkForUser(db)
+func (ul *UserLogin) checkPasswordAndGenerateTokenObject() map[string]string {
+	db := adaptors.DBConnector()
+	defer db.Close()
+	user, err := ul.checkForUser()
 	if err != "" {
 		return map[string]string{
 			"error": err,
@@ -129,8 +144,10 @@ func (ul *UserLogin) checkPasswordAndGenerateTokenObject(db *gorm.DB) map[string
 	}
 }
 
-func (ul *UserLogin) checkForUser(db *gorm.DB) (*User, string) {
-	// var data UserLogin
+func (ul *UserLogin) checkForUser() (*User, string) {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
 	var user User
 	var err string
 	db.Table("users").Where("username = ?", ul.Username).Find(&user)

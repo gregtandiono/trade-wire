@@ -7,13 +7,10 @@ import (
 	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 	"gopkg.in/kataras/iris.v6/middleware/logger"
 
-	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
 	controller "bitbucket.com/gregtandiono_/trade-wire/controllers"
 )
 
 func main() {
-
-	db := adaptors.DBConnector()
 
 	app := iris.New()
 	app.Adapt(iris.DevLogger())
@@ -41,16 +38,16 @@ func main() {
 	app.Use(customLogger)
 
 	// Pre-app endpoints
-	app.Post("/auth", controller.NewUserController(db).Login)
-	app.Post("/register", controller.NewUserController(db).Register)
+	app.Post("/auth", controller.NewUserController().Login)
+	app.Post("/register", controller.NewUserController().Register)
 
 	// user endpoints
 	users := app.Party("/users", myJwtMiddleware.Serve)
 	{
-		users.Get("/:id", controller.NewUserController(db).FetchOne)
-		users.Get("/all", controller.NewUserController(db).FetchAll)
-		users.Put("/:id", controller.NewUserController(db).Update)
-		users.Delete("/:id", controller.NewUserController(db).Delete)
+		users.Get("/", controller.NewUserController().FetchAll)
+		users.Get("/:id", controller.NewUserController().FetchOne)
+		users.Put("/:id", controller.NewUserController().Update)
+		users.Delete("/:id", controller.NewUserController().Delete)
 	}
 
 	app.Listen(":8080")

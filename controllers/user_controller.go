@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"github.com/jinzhu/gorm"
-
 	uuid "github.com/satori/go.uuid"
 
 	"bitbucket.com/gregtandiono_/trade-wire/models"
@@ -12,25 +10,22 @@ import (
 
 // UserController struct serves as a initializer
 type UserController struct {
-	database *gorm.DB
 }
 
-func NewUserController(database *gorm.DB) *UserController {
-	return &UserController{
-		database: database,
-	}
+func NewUserController() *UserController {
+	return &UserController{}
 }
 
 func (uc *UserController) Login(ctx *iris.Context) {
 	var userLogin models.UserLogin
 	ctx.ReadJSON(&userLogin)
 	ul := models.NewUserLogin(userLogin.Username, userLogin.Password)
-	tokenObj := ul.Auth(uc.database)
+	tokenObj := ul.Auth()
 	ctx.JSON(iris.StatusOK, &tokenObj)
 }
 
 func (uc *UserController) FetchAll(ctx *iris.Context) {
-	users := models.FetchAllUsers(uc.database)
+	users := models.FetchAllUsers()
 	ctx.JSON(iris.StatusOK, users)
 }
 
@@ -39,7 +34,7 @@ func (uc *UserController) FetchOne(ctx *iris.Context) {
 	ctx.ReadJSON(&user)
 	userID := ctx.Param("id")
 	user.ID = uuid.FromStringOrNil(userID)
-	ur := user.FetchOne(uc.database)
+	ur := user.FetchOne()
 	ctx.JSON(iris.StatusOK, ur)
 }
 
@@ -48,7 +43,7 @@ func (uc *UserController) Update(ctx *iris.Context) {
 	ctx.ReadJSON(&user)
 	userID := ctx.Param("id")
 	user.ID = uuid.FromStringOrNil(userID)
-	user.Update(uc.database)
+	user.Update()
 	ctx.JSON(iris.StatusOK, &user)
 }
 
@@ -57,7 +52,7 @@ func (uc *UserController) Delete(ctx *iris.Context) {
 	ctx.ReadJSON(&user)
 	userID := ctx.Param("id")
 	user.ID = uuid.FromStringOrNil(userID)
-	user.Delete(uc.database)
+	user.Delete()
 	ctx.JSON(iris.StatusOK, map[string]string{
 		"message": "record successfully deleted",
 	})
@@ -73,6 +68,6 @@ func (uc *UserController) Register(ctx *iris.Context) {
 		user.Type,
 		[]byte(user.Password),
 	)
-	u.Save(uc.database)
+	u.Save()
 	ctx.JSON(iris.StatusOK, &user)
 }
