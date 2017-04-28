@@ -17,7 +17,7 @@ func main() {
 	app.Adapt(iris.DevLogger())
 	app.Adapt(httprouter.New())
 
-	port, _, _ := adaptors.GetEnvironmentVariables()
+	port, hashString, _ := adaptors.GetEnvironmentVariables()
 
 	customLogger := logger.New(logger.Config{
 		// Status displays status code
@@ -33,7 +33,7 @@ func main() {
 	// auth middleware auth
 	myJwtMiddleware := jwtmiddleware.New(jwtmiddleware.Config{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return []byte("supersecretkey"), nil
+			return []byte(hashString), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 	})

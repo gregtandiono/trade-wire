@@ -106,7 +106,8 @@ func (ul *UserLogin) Auth() map[string]string {
 }
 
 func (ul *UserLogin) generateToken(id uuid.UUID) string {
-	var mySigningKey = []byte("supersecretkey")
+	_, hashString, _ := adaptors.GetEnvironmentVariables()
+	var mySigningKey = []byte(hashString)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"nbf": time.Now().Unix(),
 		"id":  id,
