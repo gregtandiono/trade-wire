@@ -7,7 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// DBConnector {()} gorm db adaptor
+// DBConnector gorm db adaptor
 func DBConnector() *gorm.DB {
 	_, _, dbConfig := GetEnvironmentVariables()
 	db, err := gorm.Open(

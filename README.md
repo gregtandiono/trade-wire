@@ -5,6 +5,7 @@
 ## How to run it on your machine
 
 Prequisites:
+
 - Golang
 - NodeJS
 - Postgresql
