@@ -53,4 +53,6 @@ Haven't thought about this yet... containers?
 ### Others
 
 - [ ] Project website
+- [ ] UX
+- [ ] UI
 - [ ] More polished README
