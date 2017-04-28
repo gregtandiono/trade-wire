@@ -7,8 +7,9 @@ import (
 	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 	"gopkg.in/kataras/iris.v6/middleware/logger"
 
-	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
-	controller "bitbucket.com/gregtandiono_/trade-wire/controllers"
+	"trade-wire/adaptors"
+
+	controller "trade-wire/controllers"
 )
 
 func main() {

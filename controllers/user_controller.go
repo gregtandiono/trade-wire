@@ -3,9 +3,9 @@ package controller
 import (
 	uuid "github.com/satori/go.uuid"
 
-	"bitbucket.com/gregtandiono_/trade-wire/models"
+	"trade-wire/models"
+
 	"gopkg.in/kataras/iris.v6"
-	_ "gopkg.in/kataras/iris.v6/adaptors/httprouter"
 )
 
 // UserController struct serves as a initializer

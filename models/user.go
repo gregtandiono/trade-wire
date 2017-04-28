@@ -2,10 +2,10 @@ package models
 
 import (
 	"time"
+	"trade-wire/adaptors"
 
 	"golang.org/x/crypto/bcrypt"
 
-	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
 	jwt "github.com/dgrijalva/jwt-go"
 	uuid "github.com/satori/go.uuid"
 )
