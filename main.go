@@ -7,6 +7,7 @@ import (
 	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 	"gopkg.in/kataras/iris.v6/middleware/logger"
 
+	"bitbucket.com/gregtandiono_/trade-wire/adaptors"
 	controller "bitbucket.com/gregtandiono_/trade-wire/controllers"
 )
 
@@ -15,6 +16,8 @@ func main() {
 	app := iris.New()
 	app.Adapt(iris.DevLogger())
 	app.Adapt(httprouter.New())
+
+	port, _, _ := adaptors.GetEnvironmentVariables()
 
 	customLogger := logger.New(logger.Config{
 		// Status displays status code
@@ -50,6 +53,6 @@ func main() {
 		users.Delete("/:id", controller.NewUserController().Delete)
 	}
 
-	app.Listen(":8080")
+	app.Listen(":" + port)
 
 }

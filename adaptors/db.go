@@ -9,9 +9,10 @@ import (
 
 // DBConnector {()} gorm db adaptor
 func DBConnector() *gorm.DB {
+	_, _, dbConfig := GetEnvironmentVariables()
 	db, err := gorm.Open(
 		"postgres",
-		"host=localhost user=postgres dbname=trade_wire sslmode=disable password=04120080090",
+		"host="+dbConfig["host"]+" user="+dbConfig["user"]+" dbname="+dbConfig["name"]+" sslmode=disable password="+dbConfig["password"],
 	)
 	if err != nil {
 		panic(err)
