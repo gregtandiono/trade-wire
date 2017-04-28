@@ -1,0 +1,16 @@
+[development]
+host = "localhost"
+port = 8080  
+db_name = "trade_wire"
+db_password = "04120080090"
+db_user = "postgres"
+db_host = "localhost"
+
+
+[production]
+host = "localhost"
+port = 8080  
+db_name = "trade_wire"
+db_password = "04120080090"
+db_user = "postgres"
+db_host = "localhost"
