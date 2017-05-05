@@ -12,13 +12,14 @@ import (
 	controller "trade-wire/controllers"
 )
 
-func main() {
-
+// IrisHandler returns an instance of an iris framework
+// baked into the main package so we can test the endpoints properly
+func irisHandler() *iris.Framework {
 	app := iris.New()
 	app.Adapt(iris.DevLogger())
 	app.Adapt(httprouter.New())
 
-	port, hashString, _ := adaptors.GetEnvironmentVariables()
+	_, hashString, _ := adaptors.GetEnvironmentVariables()
 
 	customLogger := logger.New(logger.Config{
 		// Status displays status code
@@ -53,6 +54,14 @@ func main() {
 		users.Put("/:id", controller.NewUserController().Update)
 		users.Delete("/:id", controller.NewUserController().Delete)
 	}
+
+	return app
+}
+
+func main() {
+
+	app := irisHandler()
+	port, _, _ := adaptors.GetEnvironmentVariables()
 
 	app.Listen(":" + port)
 
