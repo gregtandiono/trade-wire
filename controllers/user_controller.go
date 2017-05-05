@@ -6,6 +6,8 @@ import (
 	"trade-wire/models"
 
 	"gopkg.in/kataras/iris.v6"
+
+	"fmt"
 )
 
 // UserController struct serves as a initializer
@@ -68,6 +70,15 @@ func (uc *UserController) Register(ctx *iris.Context) {
 		user.Type,
 		[]byte(user.Password),
 	)
-	u.Save()
-	ctx.JSON(iris.StatusOK, &user)
+	err := u.Save()
+	if err != nil {
+		fmt.Print(err)
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, map[string]string{
+			"message": "user successfully registered",
+		})
+	}
 }

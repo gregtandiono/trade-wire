@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 	"trade-wire/adaptors"
 
@@ -43,20 +44,26 @@ func NewUserLogin(username string, password []byte) *UserLogin {
 }
 
 // HashPassword hashes password field from incoming requests
-func (u *User) hashPassword() []byte {
+func (u *User) hashPassword() ([]byte, error) {
 	hfp, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
-	if err != nil {
-		panic(err)
-	}
 
-	return hfp
+	return hfp, err
 }
 
-func (u *User) Save() {
+// Save saves new user instance into the DB
+func (u *User) Save() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
-	p := u.hashPassword()
+	p, hperr := u.hashPassword()
+	if hperr != nil {
+		return hperr
+	}
+
+	uerr := u.checkIfUsernameExists()
+	if uerr != nil {
+		return uerr
+	}
 	db.Table("users").Create(&User{
 		u.ID,
 		u.Name,
@@ -64,6 +71,8 @@ func (u *User) Save() {
 		u.Type,
 		p,
 	})
+
+	return nil
 }
 
 func FetchAllUsers() []User {
@@ -156,4 +165,17 @@ func (ul *UserLogin) checkForUser() (*User, string) {
 		err = "user not found"
 	}
 	return &user, err
+}
+
+func (u *User) checkIfUsernameExists() error {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	var user User
+	db.Table("users").Where("username = ?", u.Username).Find(&user)
+	if user.Name != "" {
+		return errors.New("user already exists")
+	}
+
+	return nil
 }
