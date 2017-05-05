@@ -10,11 +10,11 @@ import (
 func TestIrisHandler(t *testing.T) {
 	env := os.Getenv("ENV")
 	if env == "TEST" {
-		seedDataBase()
+		seedDataBase(t)
 	}
 
 	app := irisHandler()
 	e := httptest.New(app, t)
 
-	e.GET("/auth").Expect().Status(400)
+	e.GET("/auth").Expect().Status(404)
 }

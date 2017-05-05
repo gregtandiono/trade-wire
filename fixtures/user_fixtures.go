@@ -2,27 +2,33 @@ package fixtures
 
 // UserFixtures generates a set list of users and returns an object of user-case scenarios
 // will be used to mock registration requests
-func UserFixtures() map[string]string {
-	return map[string]string{
-		"validUserSignup": `{
-			"name": "George Handsometon",
+func UserFixtures() map[string]map[string]string {
+	return map[string]map[string]string{
+		"validUserSignup": {
+			"name":     "George Handsometon",
 			"username": "ghandsometon",
-			"type": "admin",
+			"type":     "admin",
 			"password": "password123",
-		}`,
-		"invalidUserSignup": `{
-			"name": "George Notsohandsometon",
+		},
+		"validEmployeeSignup": {
+			"name":     "Gregory Tandiono",
+			"username": "gtandiono",
+			"type":     "employee",
+			"password": "password123456",
+		},
+		"invalidUserSignup": {
+			"name":     "George Notsohandsometon",
 			"username": "gnothandsometon",
-			"type": "",
+			"type":     "",
 			"password": "",
-		}`,
-		"validUserLogin": `{
+		},
+		"validUserLogin": {
 			"username": "ghandsometon",
 			"password": "password123",
-		}`,
-		"invalidUserLogin": `{
+		},
+		"invalidUserLogin": {
 			"username": "ghandsometon",
 			"password": "passwo",
-		}`,
+		},
 	}
 }
