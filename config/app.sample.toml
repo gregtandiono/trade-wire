@@ -16,4 +16,15 @@ db_user = "postgres"
 db_host = "localhost"
 hash_string = "d855496646e88b7c12e0a80135bef652"
 
+[test]
+host = "localhost"
+port = 8081
+db_name = "trade_wire_test"
+db_password = "04120080090"
+db_user = "postgres"
+db_host = "localhost"
+hash_string = "d855496646e88b7c12e0a80135bef652"
+
+
+
 

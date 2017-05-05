@@ -28,6 +28,15 @@ func GetEnvironmentVariables() (port string, hashString string, db map[string]st
 				"user":     viper.GetString("production.db_user"),
 				"password": viper.GetString("production.db_password"),
 			}
+		case "TEST":
+			port = viper.GetString("test.port")
+			hashString = viper.GetString("test.hash_string")
+			db = map[string]string{
+				"host":     viper.GetString("test.db_host"),
+				"name":     viper.GetString("test.db_name"),
+				"user":     viper.GetString("test.db_user"),
+				"password": viper.GetString("test.db_password"),
+			}
 		default:
 			port = viper.GetString("development.port")
 			hashString = viper.GetString("development.hash_string")

@@ -1,6 +1,20 @@
 package main
 
-import "testing"
+import (
+	"os"
+	"testing"
 
-func TestMain(t *testing.T) {
+	"gopkg.in/kataras/iris.v6/httptest"
+)
+
+func TestIrisHandler(t *testing.T) {
+	env := os.Getenv("ENV")
+	if env == "TEST" {
+		seedDataBase()
+	}
+
+	app := irisHandler()
+	e := httptest.New(app, t)
+
+	e.GET("/auth").Expect().Status(400)
 }
