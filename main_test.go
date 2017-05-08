@@ -67,19 +67,17 @@ func TestIrisHandler(t *testing.T) {
 	})
 
 	// A user should be able to update their own data and should return the updated field only
-	e.PUT("/users/"+aro["id"]).
+	e.PUT("/users/569f9e19-5e3c-420b-8c7d-874529b50551").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		WithJSON(map[string]string{
 			"name": "George Handsometon the second",
 		}).
 		Expect().
-		Status(200).JSON().Equal(map[string]string{
-		"id":       aro["id"],
-		"name":     "George Handsometon the second",
-		"username": "",
-		"type":     "",
-		"password": "",
+		Status(400).JSON().Equal(map[string]string{
+		"error": "cannot update other users",
 	})
+
+	// A user SHOULD only be able to update their own data, and server should validate it properly
 
 }
 
