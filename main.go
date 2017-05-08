@@ -56,6 +56,11 @@ func irisHandler() *iris.Framework {
 		users.Delete("/:id", controller.NewUserController().Delete)
 	}
 
+	buyers := app.Party("/buyers", myJwtMiddleware.Serve)
+	{
+		buyers.Post("/", controller.NewBuyerController().Save)
+	}
+
 	return app
 }
 

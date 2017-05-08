@@ -108,6 +108,21 @@ func TestIrisHandler(t *testing.T) {
 		"error": "cannot delete other users",
 	})
 
+	e.POST("/buyers/").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		WithJSON(map[string]string{
+			"name":    "charoen pokphand",
+			"address": "muara karang blok L9B no 12",
+			"pic": `[
+				{"name": "hendra tjang", "telephone": "6281237738777"},
+				{"name": "felicia kurniawan", "telephone": "76632888"}
+			]`,
+		}).
+		Expect().
+		Status(200).JSON().Equal(map[string]string{
+		"message": "buyer successfully created",
+	})
+
 }
 
 func fetchToken(app *iris.Framework, t *testing.T) map[string]string {
