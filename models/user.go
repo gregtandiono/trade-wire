@@ -17,16 +17,16 @@ type User struct {
 	Name     string    `json:"name"`
 	Username string    `json:"username"`
 	Type     string    `json:"type"`
-	Password []byte    `json:"password"`
+	Password string    `json:"password"`
 }
 
 type UserLogin struct {
 	Username string `json:"username"`
-	Password []byte `json:"password"`
+	Password string `json:"password"`
 }
 
 // NewUser {u} is an instance of user struct
-func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
+func NewUser(id uuid.UUID, name, username, t, password string) *User {
 	return &User{
 		ID:       id,
 		Name:     name,
@@ -36,7 +36,7 @@ func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
 	}
 }
 
-func NewUserLogin(username string, password []byte) *UserLogin {
+func NewUserLogin(username, password string) *UserLogin {
 	return &UserLogin{
 		Username: username,
 		Password: password,
@@ -45,7 +45,7 @@ func NewUserLogin(username string, password []byte) *UserLogin {
 
 // HashPassword hashes password field from incoming requests
 func (u *User) hashPassword() ([]byte, error) {
-	hfp, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
+	hfp, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 
 	return hfp, err
 }
@@ -69,7 +69,7 @@ func (u *User) Save() error {
 		u.Name,
 		u.Username,
 		u.Type,
-		p,
+		string(p),
 	})
 
 	return nil
@@ -110,8 +110,10 @@ func (u *User) Delete() {
 	db.Table("users").Where("id = ?", u.ID).Update("deleted_at", time.Now())
 }
 
-func (ul *UserLogin) Auth() map[string]string {
-	return ul.checkPasswordAndGenerateTokenObject()
+func (ul *UserLogin) Auth() (map[string]string, error) {
+
+	r, err := ul.checkPasswordAndGenerateTokenObject()
+	return r, err
 }
 
 func (ul *UserLogin) generateToken(id uuid.UUID) string {
@@ -130,39 +132,39 @@ func (ul *UserLogin) generateToken(id uuid.UUID) string {
 	return tokenString
 }
 
-func (ul *UserLogin) checkPasswordAndGenerateTokenObject() map[string]string {
+func (ul *UserLogin) checkPasswordAndGenerateTokenObject() (map[string]string, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
+
 	user, err := ul.checkForUser()
-	if err != "" {
-		return map[string]string{
-			"error": err,
-		}
+	if err != nil {
+		return map[string]string{}, err
 	}
-	passErr := bcrypt.CompareHashAndPassword(user.Password, ul.Password)
+
+	passErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(ul.Password))
 	if passErr != nil {
-		return map[string]string{
-			"error": "password does not match",
-		}
+		return map[string]string{}, passErr
 	}
 
 	token := ul.generateToken(user.ID)
 
-	return map[string]string{
+	r := map[string]string{
 		"id":    uuid.UUID.String(user.ID),
 		"token": token,
 	}
+
+	return r, nil
 }
 
-func (ul *UserLogin) checkForUser() (*User, string) {
+func (ul *UserLogin) checkForUser() (*User, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
 	var user User
-	var err string
+	var err error
 	db.Table("users").Where("username = ?", ul.Username).Find(&user)
 	if user.Name == "" {
-		err = "user not found"
+		err = errors.New("user not found")
 	}
 	return &user, err
 }

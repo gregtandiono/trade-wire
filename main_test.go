@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	"trade-wire/fixtures"
+
 	"gopkg.in/kataras/iris.v6/httptest"
 )
 
@@ -15,6 +17,7 @@ func TestIrisHandler(t *testing.T) {
 
 	app := irisHandler()
 	e := httptest.New(app, t)
+	u := fixtures.UserFixtures()
 
 	// It should be able to register a new user
 	e.POST("/register").WithJSON(map[string]string{
@@ -40,6 +43,10 @@ func TestIrisHandler(t *testing.T) {
 	e.POST("/auth").WithJSON(map[string]string{
 		"username": "ghandsometon",
 		"password": "password123",
-	}).Expect().Status(200)
+	}).Expect().Status(200).JSON()
 
+	// It should fail on a bad login credential
+	e.POST("/auth").WithJSON(u["invalidUserLogin"]).Expect().Status(400).JSON().Equal(map[string]string{
+		"error": "username and password do not match",
+	})
 }

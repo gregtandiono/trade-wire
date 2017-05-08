@@ -19,11 +19,18 @@ func NewUserController() *UserController {
 }
 
 func (uc *UserController) Login(ctx *iris.Context) {
-	var userLogin models.UserLogin
-	ctx.ReadJSON(&userLogin)
+	// var userLogin models.UserLogin
+	userLogin := &models.UserLogin{}
+	ctx.ReadJSON(userLogin)
 	ul := models.NewUserLogin(userLogin.Username, userLogin.Password)
-	tokenObj := ul.Auth()
-	ctx.JSON(iris.StatusOK, &tokenObj)
+	tokenObj, err := ul.Auth()
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": "username and password do not match",
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, &tokenObj)
+	}
 }
 
 func (uc *UserController) FetchAll(ctx *iris.Context) {
@@ -68,7 +75,7 @@ func (uc *UserController) Register(ctx *iris.Context) {
 		user.Name,
 		user.Username,
 		user.Type,
-		[]byte(user.Password),
+		user.Password,
 	)
 	err := u.Save()
 	if err != nil {
