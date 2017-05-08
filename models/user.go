@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 	"trade-wire/adaptors"
 
@@ -16,16 +17,16 @@ type User struct {
 	Name     string    `json:"name"`
 	Username string    `json:"username"`
 	Type     string    `json:"type"`
-	Password []byte    `json:"password"`
+	Password string    `json:"password"`
 }
 
 type UserLogin struct {
 	Username string `json:"username"`
-	Password []byte `json:"password"`
+	Password string `json:"password"`
 }
 
 // NewUser {u} is an instance of user struct
-func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
+func NewUser(id uuid.UUID, name, username, t, password string) *User {
 	return &User{
 		ID:       id,
 		Name:     name,
@@ -35,35 +36,48 @@ func NewUser(id uuid.UUID, name, username, t string, password []byte) *User {
 	}
 }
 
-func NewUserLogin(username string, password []byte) *UserLogin {
+func NewUserLogin(username, password string) *UserLogin {
 	return &UserLogin{
 		Username: username,
 		Password: password,
 	}
 }
 
-// HashPassword hashes password field from incoming requests
-func (u *User) hashPassword() []byte {
-	hfp, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
-	if err != nil {
-		panic(err)
-	}
-
-	return hfp
+type AuthClaims struct {
+	ID string `json:"id"`
+	jwt.StandardClaims
 }
 
-func (u *User) Save() {
+// HashPassword hashes password field from incoming requests
+func (u *User) hashPassword() ([]byte, error) {
+	hfp, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+
+	return hfp, err
+}
+
+// Save saves new user instance into the DB
+func (u *User) Save() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
-	p := u.hashPassword()
+	p, hperr := u.hashPassword()
+	if hperr != nil {
+		return hperr
+	}
+
+	uerr := u.checkIfUsernameExists()
+	if uerr != nil {
+		return uerr
+	}
 	db.Table("users").Create(&User{
 		u.ID,
 		u.Name,
 		u.Username,
 		u.Type,
-		p,
+		string(p),
 	})
+
+	return nil
 }
 
 func FetchAllUsers() []User {
@@ -75,34 +89,61 @@ func FetchAllUsers() []User {
 	return users
 }
 
-// FetchOne model method to fetch one user
+// Me returns user's data
 // returns a map of one user
-func (u *User) FetchOne() User {
+func (u *User) Me(token string) (User, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
+	id, err := fetchIDFromToken(token)
+
 	var user User
-	db.Select([]string{"id", "name", "username", "type"}).Where("id = ?", u.ID).Find(&user)
-	return user
+	db.Select([]string{"id", "name", "username", "type"}).Where("id = ?", id).Find(&user)
+
+	return user, err
 }
 
 // Update model method updates one user record
-func (u *User) Update() {
+func (u *User) Update(token string) error {
+
+	id, _ := fetchIDFromToken(token)
+	var err error
+
 	db := adaptors.DBConnector()
 	defer db.Close()
+
+	if uuid.FromStringOrNil(id) != u.ID {
+		err = errors.New("cannot update other users")
+		return err
+	}
+
 	db.Table("users").Where("id = ?", u.ID).Updates(&u)
+
+	return err
 }
 
 // Delete model method soft deletes user record
 // it inserts a timestamp into the deleted_at column
-func (u *User) Delete() {
+func (u *User) Delete(token string) error {
+
+	id, _ := fetchIDFromToken(token)
+	var err error
+
 	db := adaptors.DBConnector()
 	defer db.Close()
+
+	if uuid.FromStringOrNil(id) != u.ID {
+		err = errors.New("cannot delete other users")
+		return err
+	}
 	db.Table("users").Where("id = ?", u.ID).Update("deleted_at", time.Now())
+
+	return err
 }
 
-func (ul *UserLogin) Auth() map[string]string {
-	return ul.checkPasswordAndGenerateTokenObject()
+func (ul *UserLogin) Auth() (map[string]string, error) {
+	r, err := ul.checkPasswordAndGenerateTokenObject()
+	return r, err
 }
 
 func (ul *UserLogin) generateToken(id uuid.UUID) string {
@@ -121,39 +162,66 @@ func (ul *UserLogin) generateToken(id uuid.UUID) string {
 	return tokenString
 }
 
-func (ul *UserLogin) checkPasswordAndGenerateTokenObject() map[string]string {
+func (ul *UserLogin) checkPasswordAndGenerateTokenObject() (map[string]string, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
+
 	user, err := ul.checkForUser()
-	if err != "" {
-		return map[string]string{
-			"error": err,
-		}
+	if err != nil {
+		return map[string]string{}, err
 	}
-	passErr := bcrypt.CompareHashAndPassword(user.Password, ul.Password)
+
+	passErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(ul.Password))
 	if passErr != nil {
-		return map[string]string{
-			"error": "password does not match",
-		}
+		return map[string]string{}, passErr
 	}
 
 	token := ul.generateToken(user.ID)
 
-	return map[string]string{
+	r := map[string]string{
 		"id":    uuid.UUID.String(user.ID),
 		"token": token,
 	}
+
+	return r, nil
 }
 
-func (ul *UserLogin) checkForUser() (*User, string) {
+func (ul *UserLogin) checkForUser() (*User, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
 	var user User
-	var err string
+	var err error
 	db.Table("users").Where("username = ?", ul.Username).Find(&user)
 	if user.Name == "" {
-		err = "user not found"
+		err = errors.New("user not found")
 	}
 	return &user, err
+}
+
+func (u *User) checkIfUsernameExists() error {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	var user User
+	db.Table("users").Where("username = ?", u.Username).Find(&user)
+	if user.Name != "" {
+		return errors.New("user already exists")
+	}
+
+	return nil
+}
+
+func fetchIDFromToken(token string) (id string, err error) {
+	_, hashString, _ := adaptors.GetEnvironmentVariables()
+
+	parsedToken, err := jwt.ParseWithClaims(token, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(hashString), nil
+	})
+
+	if claims, ok := parsedToken.Claims.(*AuthClaims); ok && parsedToken.Valid {
+		id = claims.ID
+	}
+
+	return id, err
 }

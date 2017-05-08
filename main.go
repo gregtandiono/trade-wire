@@ -12,13 +12,14 @@ import (
 	controller "trade-wire/controllers"
 )
 
-func main() {
-
+// IrisHandler returns an instance of an iris framework
+// baked into the main package so we can test the endpoints properly
+func irisHandler() *iris.Framework {
 	app := iris.New()
 	app.Adapt(iris.DevLogger())
 	app.Adapt(httprouter.New())
 
-	port, hashString, _ := adaptors.GetEnvironmentVariables()
+	_, hashString, _ := adaptors.GetEnvironmentVariables()
 
 	customLogger := logger.New(logger.Config{
 		// Status displays status code
@@ -32,6 +33,7 @@ func main() {
 	})
 
 	// auth middleware auth
+	// WIP token validation
 	myJwtMiddleware := jwtmiddleware.New(jwtmiddleware.Config{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte(hashString), nil
@@ -49,10 +51,18 @@ func main() {
 	users := app.Party("/users", myJwtMiddleware.Serve)
 	{
 		users.Get("/", controller.NewUserController().FetchAll)
-		users.Get("/:id", controller.NewUserController().FetchOne)
+		users.Get("/me", controller.NewUserController().Me)
 		users.Put("/:id", controller.NewUserController().Update)
 		users.Delete("/:id", controller.NewUserController().Delete)
 	}
+
+	return app
+}
+
+func main() {
+
+	app := irisHandler()
+	port, _, _ := adaptors.GetEnvironmentVariables()
 
 	app.Listen(":" + port)
 

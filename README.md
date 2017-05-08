@@ -18,6 +18,20 @@ run from root directory:
 realize run
 ```
 
+## Config Files
+
+Be sure to create an `config/app.toml` file that resembles `config/app.sample.toml` structure.
+
+## Test
+
+I'm debating whether to do a full-blown unit test for controllers and models or not. Right now I'm focusing on endpoint testing for now. (Not a big fan of TDD, but more towards BDD)
+
+**How to run tests**
+
+```
+ENV=TEST go test ./...
+```
+
 ## Roadmap
 
 ### Server
@@ -49,7 +63,7 @@ Will come back to this when I'm done with the backend
 
 ### Ops
 
-Haven't thought about this yet... containers?
+Haven't given this much thought.. containers?
 
 ### Others
 

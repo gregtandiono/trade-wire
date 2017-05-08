@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"strings"
+
 	uuid "github.com/satori/go.uuid"
 
 	"trade-wire/models"
@@ -17,11 +19,18 @@ func NewUserController() *UserController {
 }
 
 func (uc *UserController) Login(ctx *iris.Context) {
-	var userLogin models.UserLogin
-	ctx.ReadJSON(&userLogin)
+	// var userLogin models.UserLogin
+	userLogin := &models.UserLogin{}
+	ctx.ReadJSON(userLogin)
 	ul := models.NewUserLogin(userLogin.Username, userLogin.Password)
-	tokenObj := ul.Auth()
-	ctx.JSON(iris.StatusOK, &tokenObj)
+	tokenObj, err := ul.Auth()
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": "username and password do not match",
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, &tokenObj)
+	}
 }
 
 func (uc *UserController) FetchAll(ctx *iris.Context) {
@@ -29,13 +38,17 @@ func (uc *UserController) FetchAll(ctx *iris.Context) {
 	ctx.JSON(iris.StatusOK, users)
 }
 
-func (uc *UserController) FetchOne(ctx *iris.Context) {
+func (uc *UserController) Me(ctx *iris.Context) {
 	var user models.User
 	ctx.ReadJSON(&user)
-	userID := ctx.Param("id")
-	user.ID = uuid.FromStringOrNil(userID)
-	ur := user.FetchOne()
-	ctx.JSON(iris.StatusOK, ur)
+	ur, err := user.Me(fetchTokenFromHeader(ctx))
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, ur)
+	}
 }
 
 func (uc *UserController) Update(ctx *iris.Context) {
@@ -43,8 +56,14 @@ func (uc *UserController) Update(ctx *iris.Context) {
 	ctx.ReadJSON(&user)
 	userID := ctx.Param("id")
 	user.ID = uuid.FromStringOrNil(userID)
-	user.Update()
-	ctx.JSON(iris.StatusOK, &user)
+	err := user.Update(fetchTokenFromHeader(ctx))
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, &user)
+	}
 }
 
 func (uc *UserController) Delete(ctx *iris.Context) {
@@ -52,10 +71,16 @@ func (uc *UserController) Delete(ctx *iris.Context) {
 	ctx.ReadJSON(&user)
 	userID := ctx.Param("id")
 	user.ID = uuid.FromStringOrNil(userID)
-	user.Delete()
-	ctx.JSON(iris.StatusOK, map[string]string{
-		"message": "record successfully deleted",
-	})
+	err := user.Delete(fetchTokenFromHeader(ctx))
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, map[string]string{
+			"message": "user successfully deleted",
+		})
+	}
 }
 
 func (uc *UserController) Register(ctx *iris.Context) {
@@ -66,8 +91,21 @@ func (uc *UserController) Register(ctx *iris.Context) {
 		user.Name,
 		user.Username,
 		user.Type,
-		[]byte(user.Password),
+		user.Password,
 	)
-	u.Save()
-	ctx.JSON(iris.StatusOK, &user)
+	err := u.Save()
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, map[string]string{
+			"message": "user successfully registered",
+		})
+	}
+}
+
+func fetchTokenFromHeader(ctx *iris.Context) (tokenString string) {
+	header := strings.Split(ctx.RequestHeader("Authorization"), " ")
+	return header[1]
 }
