@@ -63,7 +63,7 @@ Will come back to this when I'm done with the backend
 
 ### Ops
 
-Haven't thought about this yet... containers?
+Haven't given this much thought.. containers?
 
 ### Others
 
