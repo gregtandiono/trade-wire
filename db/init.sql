@@ -60,6 +60,7 @@ BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TABLE IF NOT EXISTS buyers(
     id UUID PRIMARY KEY NOT NULL,
     name varchar(255) NOT NULL,
+    address varchar(255),
     pic jsonb,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
