@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"strings"
+
 	uuid "github.com/satori/go.uuid"
 
 	"trade-wire/models"
 
 	"gopkg.in/kataras/iris.v6"
-
-	"fmt"
 )
 
 // UserController struct serves as a initializer
@@ -38,13 +38,19 @@ func (uc *UserController) FetchAll(ctx *iris.Context) {
 	ctx.JSON(iris.StatusOK, users)
 }
 
-func (uc *UserController) FetchOne(ctx *iris.Context) {
+func (uc *UserController) Me(ctx *iris.Context) {
 	var user models.User
+	header := strings.Split(ctx.RequestHeader("Authorization"), " ")
+	tokenString := header[1]
 	ctx.ReadJSON(&user)
-	userID := ctx.Param("id")
-	user.ID = uuid.FromStringOrNil(userID)
-	ur := user.FetchOne()
-	ctx.JSON(iris.StatusOK, ur)
+	ur, err := user.Me(tokenString)
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, ur)
+	}
 }
 
 func (uc *UserController) Update(ctx *iris.Context) {
@@ -79,7 +85,6 @@ func (uc *UserController) Register(ctx *iris.Context) {
 	)
 	err := u.Save()
 	if err != nil {
-		fmt.Print(err)
 		ctx.JSON(iris.StatusBadRequest, map[string]string{
 			"error": err.Error(),
 		})

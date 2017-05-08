@@ -43,6 +43,11 @@ func NewUserLogin(username, password string) *UserLogin {
 	}
 }
 
+type AuthClaims struct {
+	ID string `json:"id"`
+	jwt.StandardClaims
+}
+
 // HashPassword hashes password field from incoming requests
 func (u *User) hashPassword() ([]byte, error) {
 	hfp, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
@@ -84,15 +89,27 @@ func FetchAllUsers() []User {
 	return users
 }
 
-// FetchOne model method to fetch one user
+// Me returns user's data
 // returns a map of one user
-func (u *User) FetchOne() User {
+func (u *User) Me(token string) (User, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
+	var id string
+	_, hashString, _ := adaptors.GetEnvironmentVariables()
+
+	parsedToken, err := jwt.ParseWithClaims(token, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(hashString), nil
+	})
+
+	if claims, ok := parsedToken.Claims.(*AuthClaims); ok && parsedToken.Valid {
+		id = claims.ID
+	}
+
 	var user User
-	db.Select([]string{"id", "name", "username", "type"}).Where("id = ?", u.ID).Find(&user)
-	return user
+	db.Select([]string{"id", "name", "username", "type"}).Where("id = ?", id).Find(&user)
+
+	return user, err
 }
 
 // Update model method updates one user record

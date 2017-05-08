@@ -54,9 +54,8 @@ func TestIrisHandler(t *testing.T) {
 	})
 
 	// A user should be able to fetch their own user info
-
 	aro := fetchToken(app, t)
-	e.GET("/users/"+aro["id"]).
+	e.GET("/users/me").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().
 		Status(200).JSON().Equal(map[string]string{
@@ -66,7 +65,6 @@ func TestIrisHandler(t *testing.T) {
 		"type":     "admin",
 		"password": "",
 	})
-
 }
 
 func fetchToken(app *iris.Framework, t *testing.T) map[string]string {

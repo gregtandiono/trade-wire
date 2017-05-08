@@ -33,6 +33,7 @@ func irisHandler() *iris.Framework {
 	})
 
 	// auth middleware auth
+	// WIP token validation
 	myJwtMiddleware := jwtmiddleware.New(jwtmiddleware.Config{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte(hashString), nil
@@ -50,7 +51,7 @@ func irisHandler() *iris.Framework {
 	users := app.Party("/users", myJwtMiddleware.Serve)
 	{
 		users.Get("/", controller.NewUserController().FetchAll)
-		users.Get("/:id", controller.NewUserController().FetchOne)
+		users.Get("/me", controller.NewUserController().Me)
 		users.Put("/:id", controller.NewUserController().Update)
 		users.Delete("/:id", controller.NewUserController().Delete)
 	}
