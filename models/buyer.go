@@ -37,3 +37,6 @@ func (b *Buyer) Save() error {
 
 	return nil
 }
+
+func (b *Buyer) Update() {}
+func (b *Buyer) Delete() {}

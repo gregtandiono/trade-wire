@@ -19,18 +19,23 @@ func (bc *BuyerController) Save(ctx *iris.Context) {
 	ctx.ReadJSON(&buyer)
 	buyer.ID = uuid.NewV4()
 
-	// fmt.Println(buyer)
-	// models.Save("buyers", &buyer)
-	b := models.NewAbstractRecord{
-		uuid.NewV4(),
+	b := models.NewBuyer(
+		buyer.ID,
 		buyer.Name,
 		buyer.Address,
 		buyer.PIC,
+	)
+
+	err := b.Save()
+
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": "could not create buyer record",
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, map[string]string{
+			"message": "buyer successfully created",
+		})
 	}
 
-	b.Save("buyers")
-
-	ctx.JSON(iris.StatusOK, map[string]string{
-		"message": "buyer successfully created",
-	})
 }
