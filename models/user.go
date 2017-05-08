@@ -95,16 +95,7 @@ func (u *User) Me(token string) (User, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
-	var id string
-	_, hashString, _ := adaptors.GetEnvironmentVariables()
-
-	parsedToken, err := jwt.ParseWithClaims(token, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(hashString), nil
-	})
-
-	if claims, ok := parsedToken.Claims.(*AuthClaims); ok && parsedToken.Valid {
-		id = claims.ID
-	}
+	id, err := fetchIDFromToken(token)
 
 	var user User
 	db.Select([]string{"id", "name", "username", "type"}).Where("id = ?", id).Find(&user)
@@ -113,10 +104,22 @@ func (u *User) Me(token string) (User, error) {
 }
 
 // Update model method updates one user record
-func (u *User) Update() {
+func (u *User) Update(token string) error {
+
+	id, _ := fetchIDFromToken(token)
+	var err error
+
 	db := adaptors.DBConnector()
 	defer db.Close()
+
+	if uuid.FromStringOrNil(id) != u.ID {
+		err = errors.New("cannot update other users")
+		return err
+	}
+
 	db.Table("users").Where("id = ?", u.ID).Updates(&u)
+
+	return err
 }
 
 // Delete model method soft deletes user record
@@ -128,7 +131,6 @@ func (u *User) Delete() {
 }
 
 func (ul *UserLogin) Auth() (map[string]string, error) {
-
 	r, err := ul.checkPasswordAndGenerateTokenObject()
 	return r, err
 }
@@ -197,4 +199,18 @@ func (u *User) checkIfUsernameExists() error {
 	}
 
 	return nil
+}
+
+func fetchIDFromToken(token string) (id string, err error) {
+	_, hashString, _ := adaptors.GetEnvironmentVariables()
+
+	parsedToken, err := jwt.ParseWithClaims(token, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(hashString), nil
+	})
+
+	if claims, ok := parsedToken.Claims.(*AuthClaims); ok && parsedToken.Valid {
+		id = claims.ID
+	}
+
+	return id, err
 }

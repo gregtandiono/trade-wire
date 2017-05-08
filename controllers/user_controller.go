@@ -40,10 +40,8 @@ func (uc *UserController) FetchAll(ctx *iris.Context) {
 
 func (uc *UserController) Me(ctx *iris.Context) {
 	var user models.User
-	header := strings.Split(ctx.RequestHeader("Authorization"), " ")
-	tokenString := header[1]
 	ctx.ReadJSON(&user)
-	ur, err := user.Me(tokenString)
+	ur, err := user.Me(fetchTokenFromHeader(ctx))
 	if err != nil {
 		ctx.JSON(iris.StatusBadRequest, map[string]string{
 			"message": err.Error(),
@@ -58,8 +56,14 @@ func (uc *UserController) Update(ctx *iris.Context) {
 	ctx.ReadJSON(&user)
 	userID := ctx.Param("id")
 	user.ID = uuid.FromStringOrNil(userID)
-	user.Update()
-	ctx.JSON(iris.StatusOK, &user)
+	err := user.Update(fetchTokenFromHeader(ctx))
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, &user)
+	}
 }
 
 func (uc *UserController) Delete(ctx *iris.Context) {
@@ -93,4 +97,9 @@ func (uc *UserController) Register(ctx *iris.Context) {
 			"message": "user successfully registered",
 		})
 	}
+}
+
+func fetchTokenFromHeader(ctx *iris.Context) (tokenString string) {
+	header := strings.Split(ctx.RequestHeader("Authorization"), " ")
+	return header[1]
 }

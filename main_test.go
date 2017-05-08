@@ -65,6 +65,22 @@ func TestIrisHandler(t *testing.T) {
 		"type":     "admin",
 		"password": "",
 	})
+
+	// A user should be able to update their own data and should return the updated field only
+	e.PUT("/users/"+aro["id"]).
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		WithJSON(map[string]string{
+			"name": "George Handsometon the second",
+		}).
+		Expect().
+		Status(200).JSON().Equal(map[string]string{
+		"id":       aro["id"],
+		"name":     "George Handsometon the second",
+		"username": "",
+		"type":     "",
+		"password": "",
+	})
+
 }
 
 func fetchToken(app *iris.Framework, t *testing.T) map[string]string {
