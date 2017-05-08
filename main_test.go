@@ -92,6 +92,22 @@ func TestIrisHandler(t *testing.T) {
 		"error": "cannot update other users",
 	})
 
+	// A user SHOULD be able to disable their account, WIP on a better process through admin
+	e.DELETE("/users/"+aro["id"]).
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		Expect().
+		Status(200).JSON().Equal(map[string]string{
+		"message": "user successfully deleted",
+	})
+
+	// A user SHOULD only be able to delete themseleves and nobody else, and server should validate that
+	e.DELETE("/users/569f9e19-5e3c-420b-8c7d-874529b50551").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		Expect().
+		Status(400).JSON().Equal(map[string]string{
+		"error": "cannot delete other users",
+	})
+
 }
 
 func fetchToken(app *iris.Framework, t *testing.T) map[string]string {

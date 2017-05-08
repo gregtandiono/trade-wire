@@ -124,10 +124,21 @@ func (u *User) Update(token string) error {
 
 // Delete model method soft deletes user record
 // it inserts a timestamp into the deleted_at column
-func (u *User) Delete() {
+func (u *User) Delete(token string) error {
+
+	id, _ := fetchIDFromToken(token)
+	var err error
+
 	db := adaptors.DBConnector()
 	defer db.Close()
+
+	if uuid.FromStringOrNil(id) != u.ID {
+		err = errors.New("cannot delete other users")
+		return err
+	}
 	db.Table("users").Where("id = ?", u.ID).Update("deleted_at", time.Now())
+
+	return err
 }
 
 func (ul *UserLogin) Auth() (map[string]string, error) {

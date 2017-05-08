@@ -71,10 +71,16 @@ func (uc *UserController) Delete(ctx *iris.Context) {
 	ctx.ReadJSON(&user)
 	userID := ctx.Param("id")
 	user.ID = uuid.FromStringOrNil(userID)
-	user.Delete()
-	ctx.JSON(iris.StatusOK, map[string]string{
-		"message": "record successfully deleted",
-	})
+	err := user.Delete(fetchTokenFromHeader(ctx))
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, map[string]string{
+			"message": "user successfully deleted",
+		})
+	}
 }
 
 func (uc *UserController) Register(ctx *iris.Context) {
