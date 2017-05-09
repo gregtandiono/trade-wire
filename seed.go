@@ -6,6 +6,7 @@ import (
 	"trade-wire/adaptors"
 
 	randomdata "github.com/Pallinder/go-randomdata"
+	uuid "github.com/satori/go.uuid"
 
 	"trade-wire/fixtures"
 
@@ -79,6 +80,7 @@ func seedBuyers(t *testing.T) {
 		e.POST("/buyers").
 			WithHeader("Authorization", "Bearer "+au["token"]).
 			WithJSON(map[string]string{
+				"id":      uuid.NewV4().String(),
 				"name":    randomdata.SillyName(),
 				"address": randomdata.Address(),
 				"pic":     "{}",

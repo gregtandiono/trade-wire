@@ -48,6 +48,15 @@ func (b *Buyer) FetchAllBuyers() []Buyer {
 	db.Select([]string{"id", "name", "address", "pic"}).Where("deleted_at is null").Find(&buyers)
 	return buyers
 }
-func (b *Buyer) FetchOne() {}
-func (b *Buyer) Update()   {}
-func (b *Buyer) Delete()   {}
+
+// FetchOne returns one buyer based on id in url param
+func (b *Buyer) FetchOne() Buyer {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	var buyer Buyer
+	db.Select([]string{"id", "name", "address", "pic"}).Where("id = ?", b.ID).Find(&buyer)
+	return buyer
+}
+func (b *Buyer) Update() {}
+func (b *Buyer) Delete() {}

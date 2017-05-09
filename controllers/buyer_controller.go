@@ -17,7 +17,6 @@ func NewBuyerController() *BuyerController {
 func (bc *BuyerController) Save(ctx *iris.Context) {
 	var buyer models.Buyer
 	ctx.ReadJSON(&buyer)
-	buyer.ID = uuid.NewV4()
 
 	b := models.NewBuyer(
 		buyer.ID,
@@ -44,4 +43,18 @@ func (bc *BuyerController) FetchAll(ctx *iris.Context) {
 	buyer := &models.Buyer{}
 	buyers := buyer.FetchAllBuyers()
 	ctx.JSON(iris.StatusOK, buyers)
+}
+
+func (bc *BuyerController) FetchOne(ctx *iris.Context) {
+	var buyer models.Buyer
+	id := ctx.Param("id")
+	buyer.ID = uuid.FromStringOrNil(id)
+	b := buyer.FetchOne()
+	if b.ID == uuid.FromStringOrNil("") {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": "could not find user",
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, b)
+	}
 }

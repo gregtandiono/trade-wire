@@ -62,6 +62,7 @@ func irisHandler() *iris.Framework {
 	{
 		buyers.Post("", controller.NewBuyerController().Save)
 		buyers.Get("", controller.NewBuyerController().FetchAll)
+		buyers.Get("/:id", controller.NewBuyerController().FetchOne)
 	}
 
 	return app

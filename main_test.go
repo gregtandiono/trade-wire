@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	uuid "github.com/satori/go.uuid"
+
 	"trade-wire/fixtures"
 
 	"gopkg.in/kataras/iris.v6"
@@ -108,9 +110,11 @@ func TestIrisHandler(t *testing.T) {
 		"error": "cannot delete other users",
 	})
 
+	// A user should be able to create a buyer
 	e.POST("/buyers").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		WithJSON(map[string]string{
+			"id":      uuid.NewV4().String(),
 			"name":    "charoen pokphand",
 			"address": "muara karang blok L9B no 12",
 			"pic": `[
@@ -123,10 +127,21 @@ func TestIrisHandler(t *testing.T) {
 		"message": "buyer successfully created",
 	})
 
+	// A user should be able to fetch all buyers
 	e.GET("/buyers").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().
-		Status(200).JSON().Array().Length().Equal(22)
+		Status(200).JSON().Array().Length().
+		Equal(22)
+
+	// A user should be able to fetch a buyer
+	buyerObj := e.GET("/buyers/f40e4dd4-f441-428b-8ff3-f893cb176819").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		Expect().
+		Status(200).JSON().Object()
+
+	buyerObj.Value("name").Equal("Japfa Comfeed Indonesia")
+
 }
 
 func fetchToken(app *iris.Framework, t *testing.T) map[string]string {
