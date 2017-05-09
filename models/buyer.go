@@ -11,7 +11,7 @@ type Buyer struct {
 	ID      uuid.UUID `json:"id"`
 	Name    string    `json:"name"`
 	Address string    `json:"address"`
-	PIC     string    `json:"pic"`
+	PIC     string    `json:"pic"` // Person In Charge
 }
 
 // NewBuyer returns a new instance of Buyer struct
@@ -24,6 +24,7 @@ func NewBuyer(id uuid.UUID, name, address, pic string) *Buyer {
 	}
 }
 
+// Save writes one buyer record to DB
 func (b *Buyer) Save() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
@@ -38,5 +39,15 @@ func (b *Buyer) Save() error {
 	return nil
 }
 
-func (b *Buyer) Update() {}
-func (b *Buyer) Delete() {}
+// FetchAllBuyers returns an array of buyers
+func (b *Buyer) FetchAllBuyers() []Buyer {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	var buyers []Buyer
+	db.Select([]string{"id", "name", "address", "pic"}).Where("deleted_at is null").Find(&buyers)
+	return buyers
+}
+func (b *Buyer) FetchOne() {}
+func (b *Buyer) Update()   {}
+func (b *Buyer) Delete()   {}
