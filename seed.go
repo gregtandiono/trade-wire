@@ -15,6 +15,7 @@ import (
 func seedDataBase(t *testing.T) {
 	destroyTables()
 	seedUsers(t)
+	seedBuyers(t)
 }
 
 func destroyTables() {
@@ -59,4 +60,29 @@ func seedUsers(t *testing.T) {
 			"password": "07jjpasimyh",
 		}).Expect().Status(200)
 	}
+}
+
+func seedBuyers(t *testing.T) {
+	app := irisHandler()
+	e := httptest.New(app, t)
+	b := fixtures.BuyerFixtures()
+
+	// Seed Known buyer
+	au := fetchToken(app, t)
+
+	e.POST("/buyers").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(b["validBuyerRecord"]).
+		Expect().Status(200)
+
+	for i := 0; i < 20; i++ {
+		e.POST("/buyers").
+			WithHeader("Authorization", "Bearer "+au["token"]).
+			WithJSON(map[string]string{
+				"name":    randomdata.SillyName(),
+				"address": randomdata.Address(),
+				"pic":     "{}",
+			}).Expect().Status(200)
+	}
+
 }

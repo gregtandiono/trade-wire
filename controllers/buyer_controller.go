@@ -15,7 +15,7 @@ func NewBuyerController() *BuyerController {
 }
 
 func (bc *BuyerController) Save(ctx *iris.Context) {
-	var buyer *models.Buyer
+	var buyer models.Buyer
 	ctx.ReadJSON(&buyer)
 	buyer.ID = uuid.NewV4()
 
@@ -38,4 +38,10 @@ func (bc *BuyerController) Save(ctx *iris.Context) {
 		})
 	}
 
+}
+
+func (bc *BuyerController) FetchAll(ctx *iris.Context) {
+	buyer := &models.Buyer{}
+	buyers := buyer.FetchAllBuyers()
+	ctx.JSON(iris.StatusOK, buyers)
 }
