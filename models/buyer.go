@@ -1,6 +1,7 @@
 package models
 
 import (
+	"time"
 	"trade-wire/adaptors"
 
 	uuid "github.com/satori/go.uuid"
@@ -65,4 +66,9 @@ func (b *Buyer) Update() *Buyer {
 	db.Table("buyers").Where("id = ?", b.ID).Updates(&b)
 	return b
 }
-func (b *Buyer) Delete() {}
+func (b *Buyer) Delete() {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	db.Table("buyers").Where("id = ?", b.ID).Update("deleted_at", time.Now())
+}

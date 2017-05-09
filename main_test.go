@@ -142,6 +142,7 @@ func TestIrisHandler(t *testing.T) {
 
 	buyerObj.Value("name").Equal("Japfa Comfeed Indonesia")
 
+	// A user should be able to update an existing buyer record
 	buyerUpdatedRecord := e.PUT("/buyers/f40e4dd4-f441-428b-8ff3-f893cb176819").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		WithJSON(map[string]string{
@@ -151,6 +152,14 @@ func TestIrisHandler(t *testing.T) {
 		Status(200).JSON().Object()
 
 	buyerUpdatedRecord.Value("name").Equal("Japfa Comfeed Indonesia Tbk.")
+
+	// A user should be able to soft delete a buyer record
+	e.DELETE("/buyers/f40e4dd4-f441-428b-8ff3-f893cb176819").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		Expect().
+		Status(200).JSON().Equal(map[string]string{
+		"message": "buyer record successfully deleted",
+	})
 
 }
 

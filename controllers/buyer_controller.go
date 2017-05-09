@@ -67,3 +67,14 @@ func (bc *BuyerController) Update(ctx *iris.Context) {
 	b := buyer.Update()
 	ctx.JSON(iris.StatusOK, b)
 }
+
+func (bc *BuyerController) Delete(ctx *iris.Context) {
+	var buyer models.Buyer
+	ctx.ReadJSON(&buyer)
+	id := ctx.Param("id")
+	buyer.ID = uuid.FromStringOrNil(id)
+	buyer.Delete()
+	ctx.JSON(iris.StatusOK, map[string]string{
+		"message": "buyer record successfully deleted",
+	})
+}
