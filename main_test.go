@@ -142,6 +142,16 @@ func TestIrisHandler(t *testing.T) {
 
 	buyerObj.Value("name").Equal("Japfa Comfeed Indonesia")
 
+	buyerUpdatedRecord := e.PUT("/buyers/f40e4dd4-f441-428b-8ff3-f893cb176819").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		WithJSON(map[string]string{
+			"name": "Japfa Comfeed Indonesia Tbk.",
+		}).
+		Expect().
+		Status(200).JSON().Object()
+
+	buyerUpdatedRecord.Value("name").Equal("Japfa Comfeed Indonesia Tbk.")
+
 }
 
 func fetchToken(app *iris.Framework, t *testing.T) map[string]string {

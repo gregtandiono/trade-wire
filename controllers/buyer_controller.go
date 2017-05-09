@@ -58,3 +58,12 @@ func (bc *BuyerController) FetchOne(ctx *iris.Context) {
 		ctx.JSON(iris.StatusOK, b)
 	}
 }
+
+func (bc *BuyerController) Update(ctx *iris.Context) {
+	var buyer models.Buyer
+	ctx.ReadJSON(&buyer)
+	id := ctx.Param("id")
+	buyer.ID = uuid.FromStringOrNil(id)
+	b := buyer.Update()
+	ctx.JSON(iris.StatusOK, b)
+}

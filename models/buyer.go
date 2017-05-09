@@ -58,5 +58,11 @@ func (b *Buyer) FetchOne() Buyer {
 	db.Select([]string{"id", "name", "address", "pic"}).Where("id = ?", b.ID).Find(&buyer)
 	return buyer
 }
-func (b *Buyer) Update() {}
+func (b *Buyer) Update() *Buyer {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	db.Table("buyers").Where("id = ?", b.ID).Updates(&b)
+	return b
+}
 func (b *Buyer) Delete() {}
