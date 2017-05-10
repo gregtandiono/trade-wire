@@ -29,7 +29,7 @@ func (bc *BuyerController) Save(ctx *iris.Context) {
 
 	if err != nil {
 		ctx.JSON(iris.StatusBadRequest, map[string]string{
-			"error": responseTemplate("failsave"),
+			"error": "could not create buyer record",
 		})
 	} else {
 		ctx.JSON(iris.StatusOK, map[string]string{
