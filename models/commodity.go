@@ -19,7 +19,6 @@ func NewCommodity(id uuid.UUID, name string) *Commodity {
 	}
 }
 
-// Save writes one buyer record to DB
 func (c *Commodity) Save() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
@@ -32,8 +31,7 @@ func (c *Commodity) Save() error {
 	return nil
 }
 
-// FetchAllCommoditys returns an array of commodities
-func (c *Commodity) FetchAllCommoditys() []Commodity {
+func (c *Commodity) FetchAllCommodities() []Commodity {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
@@ -42,7 +40,6 @@ func (c *Commodity) FetchAllCommoditys() []Commodity {
 	return commodities
 }
 
-// FetchOne returns one buyer based on id in url param
 func (c *Commodity) FetchOne() Commodity {
 	db := adaptors.DBConnector()
 	defer db.Close()
@@ -58,6 +55,7 @@ func (c *Commodity) Update() *Commodity {
 	db.Table("commodities").Where("id = ?", c.ID).Updates(&c)
 	return c
 }
+
 func (c *Commodity) Delete() {
 	db := adaptors.DBConnector()
 	defer db.Close()
