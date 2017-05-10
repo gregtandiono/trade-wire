@@ -33,7 +33,6 @@ func irisHandler() *iris.Framework {
 	})
 
 	// auth middleware auth
-	// WIP token validation
 	myJwtMiddleware := jwtmiddleware.New(jwtmiddleware.Config{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte(hashString), nil
