@@ -74,7 +74,6 @@ BEFORE UPDATE ON buyers FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TABLE IF NOT EXISTS commodities(
     id UUID PRIMARY KEY NOT NULL,
     name varchar(255) NOT NULL,
-    origin varchar(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE
@@ -89,6 +88,7 @@ CREATE TABLE IF NOT EXISTS varieties(
     name varchar(255) NOT NULL,
     commodity_id UUID NOT NULL,
     origin varchar(255) NOT NULL,
+    specs text,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
