@@ -52,7 +52,7 @@ func (bc *BuyerController) FetchOne(ctx *iris.Context) {
 	b := buyer.FetchOne()
 	if b.ID == uuid.FromStringOrNil("") {
 		ctx.JSON(iris.StatusBadRequest, map[string]string{
-			"error": "could not find user",
+			"error": "could not find record",
 		})
 	} else {
 		ctx.JSON(iris.StatusOK, b)

@@ -64,6 +64,15 @@ func irisHandler() *iris.Framework {
 		buyers.Delete("/:id", controller.NewBuyerController().Delete)
 	}
 
+	commodities := app.Party("/commodities", myJwtMiddleware.Serve)
+	{
+		commodities.Post("", controller.NewCommodityController().Save)
+		commodities.Get("", controller.NewCommodityController().FetchAll)
+		commodities.Get("/:id", controller.NewCommodityController().FetchOne)
+		commodities.Put("/:id", controller.NewCommodityController().Update)
+		commodities.Delete("/:id", controller.NewCommodityController().Delete)
+	}
+
 	return app
 }
 

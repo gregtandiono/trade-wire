@@ -3,8 +3,6 @@ package adaptors
 import (
 	"os"
 
-	"fmt"
-
 	"github.com/spf13/viper"
 )
 
@@ -49,7 +47,7 @@ func GetEnvironmentVariables() (port string, hashString string, db map[string]st
 		}
 	}
 
-	fmt.Printf("ENVIRONMENT: %s \n", env)
+	// fmt.Printf("ENVIRONMENT: %s \n", env)
 
 	return
 }

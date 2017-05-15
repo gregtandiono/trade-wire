@@ -17,6 +17,7 @@ func seedDataBase(t *testing.T) {
 	destroyTables()
 	seedUsers(t)
 	seedBuyers(t)
+	seedCommodities(t)
 }
 
 func destroyTables() {
@@ -86,5 +87,19 @@ func seedBuyers(t *testing.T) {
 				"pic":     "{}",
 			}).Expect().Status(200)
 	}
+}
 
+func seedCommodities(t *testing.T) {
+	app := irisHandler()
+	e := httptest.New(app, t)
+	au := fetchToken(app, t)
+	c := fixtures.CommodityFixtures()
+
+	e.POST("/commodities").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(c["validCommodityRecord"]).Expect().Status(200)
+
+	e.POST("/commodities").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(c["validCommodityRecord2"]).Expect().Status(200)
 }
