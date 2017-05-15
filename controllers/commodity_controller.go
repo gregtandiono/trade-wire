@@ -27,7 +27,7 @@ func (cc *CommodityController) Save(ctx *iris.Context) {
 
 	if err != nil {
 		ctx.JSON(iris.StatusBadRequest, map[string]string{
-			"error": "could not create commodity record",
+			"error": "failed to insert commodity record",
 		})
 	} else {
 		ctx.JSON(iris.StatusOK, map[string]string{

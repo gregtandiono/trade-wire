@@ -4,6 +4,8 @@ import (
 	"time"
 	"trade-wire/adaptors"
 
+	"fmt"
+
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -23,12 +25,17 @@ func (c *Commodity) Save() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
-	db.Table("commodities").Create(&Commodity{
+	err := db.Table("commodities").Create(&Commodity{
 		c.ID,
 		c.Name,
-	})
+	}).Error
 
-	return nil
+	if err != nil {
+		return err
+	}
+	fmt.Println(c)
+
+	return err
 }
 
 func (c *Commodity) FetchAllCommodities() []Commodity {

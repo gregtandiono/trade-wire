@@ -23,6 +23,15 @@ func TestCommodityHandler(t *testing.T) {
 		"message": "commodity successfully created",
 	})
 
+	e.POST("/commodities").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		WithJSON(map[string]string{
+			"id": uuid.NewV4().String(),
+		}).
+		Expect().Status(400).JSON().Equal(map[string]string{
+		"error": "failed to insert commodity record",
+	})
+
 	e.GET("/commodities").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().Status(200).JSON().Array().Length().Equal(3)
