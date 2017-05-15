@@ -8,7 +8,6 @@ import (
 )
 
 func TestUserHandler(t *testing.T) {
-	// seedDataBase(t)
 	app := irisHandler()
 	e := httptest.New(app, t)
 	u := fixtures.UserFixtures()

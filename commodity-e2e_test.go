@@ -9,7 +9,6 @@ import (
 )
 
 func TestCommodityHandler(t *testing.T) {
-	// seedDataBase(t)
 	app := irisHandler()
 	e := httptest.New(app, t)
 	aro := fetchToken(app, t)
