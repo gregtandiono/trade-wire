@@ -8,7 +8,7 @@ import (
 )
 
 func TestBuyerHandler(t *testing.T) {
-	seedDataBase(t)
+	// seedDataBase(t)
 	app := irisHandler()
 	e := httptest.New(app, t)
 	aro := fetchToken(app, t)

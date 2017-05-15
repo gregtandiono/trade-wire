@@ -9,7 +9,7 @@ import (
 )
 
 func TestCommodityHandler(t *testing.T) {
-	seedDataBase(t)
+	// seedDataBase(t)
 	app := irisHandler()
 	e := httptest.New(app, t)
 	aro := fetchToken(app, t)
@@ -27,5 +27,11 @@ func TestCommodityHandler(t *testing.T) {
 	e.GET("/commodities").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().Status(200).JSON().Array().Length().Equal(3)
+
+	commodityObj := e.GET("/commodities/75a5cdfe-ca69-4680-a903-af89eaaa4804").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		Expect().Status(200).JSON().Object()
+
+	commodityObj.Value("name").Equal("wheat")
 
 }
