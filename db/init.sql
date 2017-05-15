@@ -44,7 +44,7 @@ $$ language 'plpgsql';
 
 CREATE TABLE IF NOT EXISTS users(
     id UUID PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL,
+    name varchar(255) NOT NULL CHECK (name <> ''),
     username varchar(30) NOT NULL,
     password varchar(255) NOT NULL,
     type user_types NOT NULL,
@@ -59,7 +59,7 @@ BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
 CREATE TABLE IF NOT EXISTS buyers(
     id UUID PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL,
+    name varchar(255) NOT NULL CHECK (name <> ''),
     address varchar(255),
     pic jsonb,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -73,7 +73,7 @@ BEFORE UPDATE ON buyers FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
 CREATE TABLE IF NOT EXISTS commodities(
     id UUID PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL,
+    name varchar(255) NOT NULL CHECK (name <> ''),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE
@@ -85,7 +85,7 @@ BEFORE UPDATE ON commodities FOR EACH ROW EXECUTE PROCEDURE update_modified_colu
 
 CREATE TABLE IF NOT EXISTS varieties(
     id UUID PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL,
+    name varchar(255) NOT NULL CHECK (name <> ''),
     commodity_id UUID NOT NULL,
     origin varchar(255) NOT NULL,
     specs text,
@@ -101,7 +101,7 @@ BEFORE UPDATE ON varieties FOR EACH ROW EXECUTE PROCEDURE update_modified_column
 
 CREATE TABLE IF NOT EXISTS suppliers(
     id UUID PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL,
+    name varchar(255) NOT NULL CHECK (name <> ''),
     address varchar(255) NOT NULL,
     pic jsonb,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
