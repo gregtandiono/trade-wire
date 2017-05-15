@@ -48,12 +48,12 @@ func (c *Commodity) FetchOne() (Commodity, error) {
 	err := db.Select([]string{"id", "name"}).Where("id = ?", c.ID).Find(&commodity).Error
 	return commodity, err
 }
-func (c *Commodity) Update() *Commodity {
+func (c *Commodity) Update() (*Commodity, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
-	db.Table("commodities").Where("id = ?", c.ID).Updates(&c)
-	return c
+	err := db.Table("commodities").Where("id = ?", c.ID).Updates(&c).Error
+	return c, err
 }
 
 func (c *Commodity) Delete() {

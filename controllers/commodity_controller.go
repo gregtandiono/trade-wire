@@ -68,8 +68,14 @@ func (cc *CommodityController) Update(ctx *iris.Context) {
 	ctx.ReadJSON(&commodity)
 	id := ctx.Param("id")
 	commodity.ID = uuid.FromStringOrNil(id)
-	c := commodity.Update()
-	ctx.JSON(iris.StatusOK, c)
+	c, err := commodity.Update()
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": "failed to update record",
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, c)
+	}
 }
 
 func (cc *CommodityController) Delete(ctx *iris.Context) {
