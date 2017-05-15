@@ -42,6 +42,12 @@ func TestCommodityHandler(t *testing.T) {
 
 	commodityObj.Value("name").Equal("wheat")
 
+	e.GET("/commodities/75a5cdfe-ca69-4680-a903-af89eaaa4803").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		Expect().Status(400).JSON().Equal(map[string]string{
+		"error": "could not find record",
+	})
+
 	commodityUpdatedRecord := e.PUT("/commodities/75a5cdfe-ca69-4680-a903-af89eaaa4804").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		WithJSON(map[string]string{

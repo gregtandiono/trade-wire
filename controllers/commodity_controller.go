@@ -39,16 +39,22 @@ func (cc *CommodityController) Save(ctx *iris.Context) {
 
 func (cc *CommodityController) FetchAll(ctx *iris.Context) {
 	commodity := &models.Commodity{}
-	commodities := commodity.FetchAllCommodities()
-	ctx.JSON(iris.StatusOK, commodities)
+	commodities, err := commodity.FetchAllCommodities()
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": "failed to fetch all commodities",
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, commodities)
+	}
 }
 
 func (cc *CommodityController) FetchOne(ctx *iris.Context) {
 	var commodity models.Commodity
 	id := ctx.Param("id")
 	commodity.ID = uuid.FromStringOrNil(id)
-	c := commodity.FetchOne()
-	if c.ID == uuid.FromStringOrNil("") {
+	c, err := commodity.FetchOne()
+	if err != nil {
 		ctx.JSON(iris.StatusBadRequest, map[string]string{
 			"error": "could not find record",
 		})

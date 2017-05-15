@@ -4,8 +4,6 @@ import (
 	"time"
 	"trade-wire/adaptors"
 
-	"fmt"
-
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -30,30 +28,25 @@ func (c *Commodity) Save() error {
 		c.Name,
 	}).Error
 
-	if err != nil {
-		return err
-	}
-	fmt.Println(c)
-
 	return err
 }
 
-func (c *Commodity) FetchAllCommodities() []Commodity {
+func (c *Commodity) FetchAllCommodities() ([]Commodity, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
 	var commodities []Commodity
-	db.Select([]string{"id", "name"}).Where("deleted_at is null").Find(&commodities)
-	return commodities
+	err := db.Select([]string{"id", "name"}).Where("deleted_at is null").Find(&commodities).Error
+	return commodities, err
 }
 
-func (c *Commodity) FetchOne() Commodity {
+func (c *Commodity) FetchOne() (Commodity, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
 	var commodity Commodity
-	db.Select([]string{"id", "name"}).Where("id = ?", c.ID).Find(&commodity)
-	return commodity
+	err := db.Select([]string{"id", "name"}).Where("id = ?", c.ID).Find(&commodity).Error
+	return commodity, err
 }
 func (c *Commodity) Update() *Commodity {
 	db := adaptors.DBConnector()
