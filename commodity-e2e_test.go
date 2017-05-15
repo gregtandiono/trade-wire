@@ -34,4 +34,18 @@ func TestCommodityHandler(t *testing.T) {
 
 	commodityObj.Value("name").Equal("wheat")
 
+	commodityUpdatedRecord := e.PUT("/commodities/75a5cdfe-ca69-4680-a903-af89eaaa4804").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		WithJSON(map[string]string{
+			"name": "soybean meal",
+		}).
+		Expect().Status(200).JSON().Object()
+
+	commodityUpdatedRecord.Value("name").Equal("soybean meal")
+
+	e.DELETE("/commodities/75a5cdfe-ca69-4680-a903-af89eaaa4804").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		Expect().Status(200).JSON().Equal(map[string]string{
+		"message": "record successfully deleted",
+	})
 }
