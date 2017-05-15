@@ -36,7 +36,7 @@ func (c *Commodity) FetchAllCommodities() []Commodity {
 	defer db.Close()
 
 	var commodities []Commodity
-	db.Select([]string{"id", "name", "address", "pic"}).Where("deleted_at is null").Find(&commodities)
+	db.Select([]string{"id", "name"}).Where("deleted_at is null").Find(&commodities)
 	return commodities
 }
 
@@ -45,7 +45,7 @@ func (c *Commodity) FetchOne() Commodity {
 	defer db.Close()
 
 	var commodity Commodity
-	db.Select([]string{"id", "name", "address", "pic"}).Where("id = ?", c.ID).Find(&commodity)
+	db.Select([]string{"id", "name"}).Where("id = ?", c.ID).Find(&commodity)
 	return commodity
 }
 func (c *Commodity) Update() *Commodity {
