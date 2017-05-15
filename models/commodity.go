@@ -66,8 +66,11 @@ func (c *Commodity) Delete() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
-	_, err := c.FetchOne()
+	_, notFoundErr := c.FetchOne()
+	if notFoundErr != nil {
+		return notFoundErr
+	}
 
-	db.Table("commodities").Where("id = ?", c.ID).Update("deleted_at", time.Now())
+	err := db.Table("commodities").Where("id = ?", c.ID).Update("deleted_at", time.Now()).Error
 	return err
 }
