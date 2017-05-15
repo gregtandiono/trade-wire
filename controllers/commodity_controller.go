@@ -83,8 +83,14 @@ func (cc *CommodityController) Delete(ctx *iris.Context) {
 	ctx.ReadJSON(&commodity)
 	id := ctx.Param("id")
 	commodity.ID = uuid.FromStringOrNil(id)
-	commodity.Delete()
-	ctx.JSON(iris.StatusOK, map[string]string{
-		"message": "record successfully deleted",
-	})
+	err := commodity.Delete()
+	if err != nil {
+		ctx.JSON(iris.StatusBadRequest, map[string]string{
+			"error": "failed to delete record",
+		})
+	} else {
+		ctx.JSON(iris.StatusOK, map[string]string{
+			"message": "record successfully deleted",
+		})
+	}
 }

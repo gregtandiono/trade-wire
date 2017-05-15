@@ -56,9 +56,10 @@ func (c *Commodity) Update() (*Commodity, error) {
 	return c, err
 }
 
-func (c *Commodity) Delete() {
+func (c *Commodity) Delete() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
-	db.Table("commodities").Where("id = ?", c.ID).Update("deleted_at", time.Now())
+	err := db.Table("commodities").Where("id = ?", c.ID).Update("deleted_at", time.Now()).Error
+	return err
 }
