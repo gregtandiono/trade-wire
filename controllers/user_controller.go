@@ -11,8 +11,7 @@ import (
 )
 
 // UserController struct serves as a initializer
-type UserController struct {
-}
+type UserController struct{}
 
 func NewUserController() *UserController {
 	return &UserController{}
