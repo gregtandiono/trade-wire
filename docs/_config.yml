@@ -13,7 +13,7 @@ timezone:
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: https://gregtandiono.github.io/trade-wire
-root: /
+root: /trade-wire
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 
@@ -71,4 +71,4 @@ deploy:
   type: git
   # repo: https://github.com/gregtandiono/trade-wire
   repo: git@github.com:gregtandiono/trade-wire.git
-  branch: master
+  branch: gh-pages
