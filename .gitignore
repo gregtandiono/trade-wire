@@ -1,2 +1,3 @@
 *.exe
 config/app.toml
+node_modules
