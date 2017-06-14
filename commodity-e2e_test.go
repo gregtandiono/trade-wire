@@ -5,7 +5,7 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"gopkg.in/kataras/iris.v6/httptest"
+	"github.com/kataras/iris/httptest"
 )
 
 func TestCommodityHandler(t *testing.T) {
