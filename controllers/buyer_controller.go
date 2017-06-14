@@ -5,7 +5,7 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	iris "gopkg.in/kataras/iris.v6"
+	"github.com/kataras/iris"
 )
 
 type BuyerController struct{}
