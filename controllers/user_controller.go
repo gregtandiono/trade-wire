@@ -3,11 +3,11 @@ package controller
 import (
 	"strings"
 
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
 	uuid "github.com/satori/go.uuid"
 
 	"trade-wire/models"
-
-	"gopkg.in/kataras/iris.v6"
 )
 
 // UserController struct serves as a initializer
@@ -17,72 +17,81 @@ func NewUserController() *UserController {
 	return &UserController{}
 }
 
-func (uc *UserController) Login(ctx *iris.Context) {
+func (uc *UserController) Login(ctx context.Context) {
 	// var userLogin models.UserLogin
 	userLogin := &models.UserLogin{}
 	ctx.ReadJSON(userLogin)
 	ul := models.NewUserLogin(userLogin.Username, userLogin.Password)
 	tokenObj, err := ul.Auth()
 	if err != nil {
-		ctx.JSON(iris.StatusBadRequest, map[string]string{
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(map[string]string{
 			"error": "username and password do not match",
 		})
 	} else {
-		ctx.JSON(iris.StatusOK, &tokenObj)
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(&tokenObj)
 	}
 }
 
-func (uc *UserController) FetchAll(ctx *iris.Context) {
+func (uc *UserController) FetchAll(ctx context.Context) {
 	users := models.FetchAllUsers()
-	ctx.JSON(iris.StatusOK, users)
+	ctx.StatusCode(iris.StatusOK)
+	ctx.JSON(users)
 }
 
-func (uc *UserController) Me(ctx *iris.Context) {
+func (uc *UserController) Me(ctx context.Context) {
 	var user models.User
 	ctx.ReadJSON(&user)
 	ur, err := user.Me(fetchTokenFromHeader(ctx))
 	if err != nil {
-		ctx.JSON(iris.StatusBadRequest, map[string]string{
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(map[string]string{
 			"message": err.Error(),
 		})
 	} else {
-		ctx.JSON(iris.StatusOK, ur)
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(ur)
 	}
 }
 
-func (uc *UserController) Update(ctx *iris.Context) {
+func (uc *UserController) Update(ctx context.Context) {
 	var user models.User
 	ctx.ReadJSON(&user)
-	userID := ctx.Param("id")
+	userID := ctx.Params().Get("id")
 	user.ID = uuid.FromStringOrNil(userID)
 	err := user.Update(fetchTokenFromHeader(ctx))
 	if err != nil {
-		ctx.JSON(iris.StatusBadRequest, map[string]string{
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(map[string]string{
 			"error": err.Error(),
 		})
 	} else {
-		ctx.JSON(iris.StatusOK, &user)
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(&user)
 	}
 }
 
-func (uc *UserController) Delete(ctx *iris.Context) {
+func (uc *UserController) Delete(ctx context.Context) {
 	var user models.User
 	ctx.ReadJSON(&user)
-	userID := ctx.Param("id")
+	userID := ctx.Params().Get("id")
 	user.ID = uuid.FromStringOrNil(userID)
 	err := user.Delete(fetchTokenFromHeader(ctx))
 	if err != nil {
-		ctx.JSON(iris.StatusBadRequest, map[string]string{
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(map[string]string{
 			"error": err.Error(),
 		})
 	} else {
-		ctx.JSON(iris.StatusOK, map[string]string{
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(map[string]string{
 			"message": "user successfully deleted",
 		})
 	}
 }
 
-func (uc *UserController) Register(ctx *iris.Context) {
+func (uc *UserController) Register(ctx context.Context) {
 	var user models.User
 	ctx.ReadJSON(&user)
 	u := models.NewUser(
@@ -94,17 +103,19 @@ func (uc *UserController) Register(ctx *iris.Context) {
 	)
 	err := u.Save()
 	if err != nil {
-		ctx.JSON(iris.StatusBadRequest, map[string]string{
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(map[string]string{
 			"error": err.Error(),
 		})
 	} else {
-		ctx.JSON(iris.StatusOK, map[string]string{
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(map[string]string{
 			"message": "user successfully registered",
 		})
 	}
 }
 
-func fetchTokenFromHeader(ctx *iris.Context) (tokenString string) {
-	header := strings.Split(ctx.RequestHeader("Authorization"), " ")
+func fetchTokenFromHeader(ctx context.Context) (tokenString string) {
+	header := strings.Split(ctx.GetHeader("Authorization"), " ")
 	return header[1]
 }

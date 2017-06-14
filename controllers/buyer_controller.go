@@ -51,7 +51,7 @@ func (bc *BuyerController) FetchAll(ctx context.Context) {
 
 func (bc *BuyerController) FetchOne(ctx context.Context) {
 	var buyer models.Buyer
-	id := ctx.Param("id")
+	id := ctx.Params().Get("id")
 	buyer.ID = uuid.FromStringOrNil(id)
 	b := buyer.FetchOne()
 	if b.ID == uuid.FromStringOrNil("") {
