@@ -4,7 +4,7 @@ import (
 	"testing"
 	"trade-wire/fixtures"
 
-	"gopkg.in/kataras/iris.v6/httptest"
+	"github.com/kataras/iris/httptest"
 )
 
 func TestUserHandler(t *testing.T) {

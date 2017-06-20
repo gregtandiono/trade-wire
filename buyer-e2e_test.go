@@ -3,8 +3,8 @@ package main
 import (
 	"testing"
 
+	"github.com/kataras/iris/httptest"
 	uuid "github.com/satori/go.uuid"
-	"gopkg.in/kataras/iris.v6/httptest"
 )
 
 func TestBuyerHandler(t *testing.T) {

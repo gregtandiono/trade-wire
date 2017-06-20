@@ -3,11 +3,11 @@ package main
 import (
 	"testing"
 
-	iris "gopkg.in/kataras/iris.v6"
-	"gopkg.in/kataras/iris.v6/httptest"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/httptest"
 )
 
-func fetchToken(app *iris.Framework, t *testing.T) map[string]string {
+func fetchToken(app *iris.Application, t *testing.T) map[string]string {
 	e := httptest.New(app, t)
 
 	// Assign variable to json response

@@ -10,7 +10,7 @@ import (
 
 	"trade-wire/fixtures"
 
-	"gopkg.in/kataras/iris.v6/httptest"
+	"github.com/kataras/iris/httptest"
 )
 
 func seedDataBase(t *testing.T) {

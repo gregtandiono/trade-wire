@@ -3,9 +3,12 @@ package main
 import (
 	jwt "github.com/dgrijalva/jwt-go"
 	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
-	iris "gopkg.in/kataras/iris.v6"
-	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
-	"gopkg.in/kataras/iris.v6/middleware/logger"
+	// iris "gopkg.in/kataras/iris.v6"
+	// "gopkg.in/kataras/iris.v6/adaptors/httprouter"
+	// "gopkg.in/kataras/iris.v6/middleware/logger"
+
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/middleware/logger"
 
 	"trade-wire/adaptors"
 
@@ -14,10 +17,10 @@ import (
 
 // IrisHandler returns an instance of an iris framework
 // baked into the main package so we can test the endpoints properly
-func irisHandler() *iris.Framework {
+func irisHandler() *iris.Application {
 	app := iris.New()
-	app.Adapt(iris.DevLogger())
-	app.Adapt(httprouter.New())
+	// app.Adapt(iris.DevLogger())
+	// app.Adapt(httprouter.New())
 
 	_, hashString, _ := adaptors.GetEnvironmentVariables()
 
