@@ -47,7 +47,7 @@ func (v *Variety) Save() error {
 	return err
 }
 
-func (v *Variety) FetchAllCommodities() ([]Variety, error) {
+func (v *Variety) FetchAllVarieties() ([]Variety, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
