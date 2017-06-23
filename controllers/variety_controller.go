@@ -10,6 +10,10 @@ import (
 
 type VarietyController struct{}
 
+func NewVarietyController() *VarietyController {
+	return &VarietyController{}
+}
+
 func (vc *VarietyController) Save(ctx context.Context) {
 	var variety models.Variety
 	ctx.ReadJSON(&variety)

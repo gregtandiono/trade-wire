@@ -76,6 +76,15 @@ func irisHandler() *iris.Application {
 		commodities.Delete("/:id", controller.NewCommodityController().Delete)
 	}
 
+	varieties := app.Party("/varieties", myJwtMiddleware.Serve)
+	{
+		varieties.Post("", controller.NewVarietyController().Save)
+		varieties.Get("", controller.NewVarietyController().FetchAll)
+		varieties.Get("/:id", controller.NewVarietyController().FetchOne)
+		varieties.Put("/:id", controller.NewVarietyController().Update)
+		varieties.Delete("/:id", controller.NewVarietyController().Delete)
+	}
+
 	return app
 }
 
