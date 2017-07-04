@@ -30,6 +30,7 @@ DROP TYPE IF EXISTS user_types;
 
 CREATE TYPE contact_types AS ENUM ('supplier', 'buyer');
 CREATE TYPE user_types AS ENUM ('admin', 'employee');
+CREATE TYPE company_types AS ENUM ('supplier', 'buyer');
 
 CREATE OR REPLACE FUNCTION update_modified_column()
 RETURNS TRIGGER AS $$
@@ -55,20 +56,6 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TRIGGER update_modified_column
 BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
-
-
-CREATE TABLE IF NOT EXISTS buyers(
-    id UUID PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL CHECK (name <> ''),
-    address varchar(255),
-    pic jsonb,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    deleted_at TIMESTAMP WITH TIME ZONE
-);
-
-CREATE TRIGGER update_modified_column
-BEFORE UPDATE ON buyers FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
 
 CREATE TABLE IF NOT EXISTS commodities(
@@ -98,31 +85,36 @@ CREATE TABLE IF NOT EXISTS varieties(
 CREATE TRIGGER update_modified_column
 BEFORE UPDATE ON varieties FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
-
-CREATE TABLE IF NOT EXISTS suppliers(
+CREATE TABLE IF NOT EXISTS companies(
     id UUID PRIMARY KEY NOT NULL,
     name varchar(255) NOT NULL CHECK (name <> ''),
     address varchar(255) NOT NULL,
-    pic jsonb,
+    company_type company_types NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TRIGGER update_modified_column
-BEFORE UPDATE ON suppliers FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+BEFORE UPDATE ON companies FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
-CREATE TABLE IF NOT EXISTS companies(
+
+CREATE TABLE IF NOT EXISTS contacts(
     id UUID PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL CHECK (name <> ''),
-    address varchar(255) NOT NULL,
-    pic jsonb,
+    name varchar(255) NOT NULL,
+    position varchar(255) NOT NULL,
+    office_number varchar(255),
+    cell_number varchar(255),
+    notes varchar(255),
+    company_id UUID,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    deleted_at TIMESTAMP WITH TIME ZONE
+    deleted_at TIMESTAMP WITH TIME ZONE,
+    FOREIGN KEY (company_id) REFERENCES companies (id)
 );
 
-
+CREATE TRIGGER update_modified_column
+BEFORE UPDATE ON contacts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
 CREATE TABLE IF NOT EXISTS trades(
     id UUID PRIMARY KEY NOT NULL,
@@ -146,27 +138,6 @@ CREATE TABLE IF NOT EXISTS trades(
 
 CREATE TRIGGER update_modified_column
 BEFORE UPDATE ON trades FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
-
-
-CREATE TABLE IF NOT EXISTS contacts(
-    id UUID PRIMARY KEY NOT NULL,
-    contact_type contact_types NOT NULL,
-    name varchar(255) NOT NULL,
-    position varchar(255) NOT NULL,
-    office_number varchar(255),
-    cell_number varchar(255),
-    notes varchar(255),
-    supplier_id UUID,
-    buyer_id UUID,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    deleted_at TIMESTAMP WITH TIME ZONE,
-    FOREIGN KEY (supplier_id) REFERENCES suppliers (id),
-    FOREIGN KEY (buyer_id) REFERENCES buyers (id)
-);
-
-CREATE TRIGGER update_modified_column
-BEFORE UPDATE ON contacts FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
 
 CREATE TABLE IF NOT EXISTS tracking(
