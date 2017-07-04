@@ -58,13 +58,13 @@ func irisHandler() *iris.Application {
 		users.Delete("/:id", controller.NewUserController().Delete)
 	}
 
-	buyers := app.Party("/buyers", myJwtMiddleware.Serve)
+	companies := app.Party("/companies", myJwtMiddleware.Serve)
 	{
-		buyers.Post("", controller.NewBuyerController().Save)
-		buyers.Get("", controller.NewBuyerController().FetchAll)
-		buyers.Get("/:id", controller.NewBuyerController().FetchOne)
-		buyers.Put("/:id", controller.NewBuyerController().Update)
-		buyers.Delete("/:id", controller.NewBuyerController().Delete)
+		companies.Post("", controller.NewCompanyController().Save)
+		companies.Get("", controller.NewCompanyController().FetchAll)
+		companies.Get("/:id", controller.NewCompanyController().FetchOne)
+		companies.Put("/:id", controller.NewCompanyController().Update)
+		companies.Delete("/:id", controller.NewCompanyController().Delete)
 	}
 
 	commodities := app.Party("/commodities", myJwtMiddleware.Serve)
