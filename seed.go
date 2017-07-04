@@ -16,7 +16,7 @@ import (
 func seedDataBase(t *testing.T) {
 	destroyTables()
 	seedUsers(t)
-	seedBuyers(t)
+	seedCompanies(t)
 	seedCommodities(t)
 	seedVarieties(t)
 }
@@ -29,10 +29,9 @@ func destroyTables() {
 		"tracking",
 		"contacts",
 		"trades",
-		"suppliers",
 		"varieties",
 		"commodities",
-		"buyers",
+		"companies",
 		"users",
 	}
 
@@ -65,7 +64,7 @@ func seedUsers(t *testing.T) {
 	}
 }
 
-func seedBuyers(t *testing.T) {
+func seedCompanies(t *testing.T) {
 	app := irisHandler()
 	e := httptest.New(app, t)
 	b := fixtures.BuyerFixtures()
@@ -73,19 +72,30 @@ func seedBuyers(t *testing.T) {
 	// Seed Known buyer
 	au := fetchToken(app, t)
 
-	e.POST("/buyers").
+	e.POST("/companies").
 		WithHeader("Authorization", "Bearer "+au["token"]).
 		WithJSON(b["validBuyerRecord"]).
 		Expect().Status(200)
 
 	for i := 0; i < 20; i++ {
-		e.POST("/buyers").
+		e.POST("/companies").
 			WithHeader("Authorization", "Bearer "+au["token"]).
 			WithJSON(map[string]string{
-				"id":      uuid.NewV4().String(),
-				"name":    randomdata.SillyName(),
-				"address": randomdata.Address(),
-				"pic":     "{}",
+				"id":           uuid.NewV4().String(),
+				"name":         randomdata.SillyName(),
+				"address":      randomdata.Address(),
+				"company_type": "buyer",
+			}).Expect().Status(200)
+	}
+
+	for i := 0; i < 10; i++ {
+		e.POST("/companies").
+			WithHeader("Authorization", "Bearer "+au["token"]).
+			WithJSON(map[string]string{
+				"id":           uuid.NewV4().String(),
+				"name":         randomdata.SillyName(),
+				"address":      randomdata.Address(),
+				"company_type": "supplier",
 			}).Expect().Status(200)
 	}
 }
