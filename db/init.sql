@@ -112,6 +112,17 @@ CREATE TABLE IF NOT EXISTS suppliers(
 CREATE TRIGGER update_modified_column
 BEFORE UPDATE ON suppliers FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 
+CREATE TABLE IF NOT EXISTS companies(
+    id UUID PRIMARY KEY NOT NULL,
+    name varchar(255) NOT NULL CHECK (name <> ''),
+    address varchar(255) NOT NULL,
+    pic jsonb,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+
 
 CREATE TABLE IF NOT EXISTS trades(
     id UUID PRIMARY KEY NOT NULL,
