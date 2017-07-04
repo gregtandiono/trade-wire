@@ -25,4 +25,15 @@ func TestVarietyHandler(t *testing.T) {
 		Expect().Status(200).JSON().Equal(map[string]string{
 		"message": "variety successfully created",
 	})
+
+	e.POST("/varieties").
+		WithHeader("Authorization", "Bearer "+aro["token"]).
+		WithJSON(map[string]string{
+			"id":     uuid.NewV4().String(),
+			"name":   "Australian Standard White (ASW)",
+			"origin": "australia",
+		}).
+		Expect().Status(400).JSON().Equal(map[string]string{
+		"error": "failed to insert variety record",
+	})
 }
