@@ -18,6 +18,7 @@ func seedDataBase(t *testing.T) {
 	seedUsers(t)
 	seedBuyers(t)
 	seedCommodities(t)
+	seedVarieties(t)
 }
 
 func destroyTables() {
