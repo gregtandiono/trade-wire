@@ -52,7 +52,7 @@ func (v *Variety) FetchAllVarieties() ([]Variety, error) {
 	defer db.Close()
 
 	var varieties []Variety
-	err := db.Select([]string{"id", "name"}).Where("deleted_at is null").Find(&varieties).Error
+	err := db.Select([]string{"id", "name", "origin", "specs"}).Where("deleted_at is null").Find(&varieties).Error
 	return varieties, err
 }
 
