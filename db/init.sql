@@ -1,10 +1,9 @@
 -- DESTROY TABLES FIRST
 
 DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS buyers CASCADE;
+DROP TABLE IF EXISTS companies CASCADE;
 DROP TABLE IF EXISTS commodities CASCADE;
 DROP TABLE IF EXISTS varieties CASCADE;
-DROP TABLE IF EXISTS suppliers CASCADE;
 DROP TABLE IF EXISTS trades CASCADE;
 DROP TABLE IF EXISTS contacts CASCADE;
 DROP TABLE IF EXISTS tracking CASCADE;
@@ -12,23 +11,20 @@ DROP TABLE IF EXISTS tracking CASCADE;
 -- DROP TRIGGERS
 
 DROP TRIGGER IF EXISTS update_modified_column ON users;
-DROP TRIGGER IF EXISTS update_modified_column ON buyers;
+DROP TRIGGER IF EXISTS update_modified_column ON companies;
 DROP TRIGGER IF EXISTS update_modified_column ON commodities;
 DROP TRIGGER IF EXISTS update_modified_column ON varieties;
-DROP TRIGGER IF EXISTS update_modified_column ON suppliers;
-DROP TRIGGER IF EXISTS update_modified_column ON buyers;
 DROP TRIGGER IF EXISTS update_modified_column ON trades;
 DROP TRIGGER IF EXISTS update_modified_column ON contacts;
 DROP TRIGGER IF EXISTS update_modified_column ON tracking;
 
 -- DROP TYPES
 
-DROP TYPE IF EXISTS contact_types;
+DROP TYPE IF EXISTS company_types;
 DROP TYPE IF EXISTS user_types;
 
 -- FUNCTIONS & TYPES
 
-CREATE TYPE contact_types AS ENUM ('supplier', 'buyer');
 CREATE TYPE user_types AS ENUM ('admin', 'employee');
 CREATE TYPE company_types AS ENUM ('supplier', 'buyer');
 
@@ -118,8 +114,7 @@ BEFORE UPDATE ON contacts FOR EACH ROW EXECUTE PROCEDURE update_modified_column(
 
 CREATE TABLE IF NOT EXISTS trades(
     id UUID PRIMARY KEY NOT NULL,
-    buyer_id UUID NOT NULL,
-    supplier_id UUID NOT NULL,
+    company_id UUID NOT NULL,
     commodity_id UUID NOT NULL,
     variety_id UUID NOT NULL,
     quantity int NOT NULL,
@@ -130,8 +125,7 @@ CREATE TABLE IF NOT EXISTS trades(
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
-    FOREIGN KEY (supplier_id) REFERENCES suppliers (id),
-    FOREIGN KEY (buyer_id) REFERENCES buyers (id),
+    FOREIGN KEY (company_id) REFERENCES companies (id),
     FOREIGN KEY (commodity_id) REFERENCES commodities (id),
     FOREIGN KEY (variety_id) REFERENCES varieties (id)
 );
