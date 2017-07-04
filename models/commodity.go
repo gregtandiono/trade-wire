@@ -7,11 +7,13 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// Commodity model struct
 type Commodity struct {
 	ID   uuid.UUID `json:"id"`
 	Name string    `json:"name"`
 }
 
+// NewCommodity func returns a new instance of Commodity struct
 func NewCommodity(id uuid.UUID, name string) *Commodity {
 	return &Commodity{
 		ID:   id,
