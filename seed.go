@@ -103,3 +103,18 @@ func seedCommodities(t *testing.T) {
 		WithHeader("Authorization", "Bearer "+au["token"]).
 		WithJSON(c["validCommodityRecord2"]).Expect().Status(200)
 }
+
+func seedVarieties(t *testing.T) {
+	app := irisHandler()
+	e := httptest.New(app, t)
+	au := fetchToken(app, t)
+	v := fixtures.VarietyFixtures()
+
+	e.POST("/varieties").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(v["validVarietyRecord"]).Expect().Status(200)
+
+	e.POST("/varieties").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(v["validVarietyRecord2"]).Expect().Status(200)
+}
