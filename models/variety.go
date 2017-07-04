@@ -61,7 +61,7 @@ func (v *Variety) FetchOne() (Variety, error) {
 	defer db.Close()
 
 	var variety Variety
-	err := db.Select([]string{"id", "name"}).Where("id = ?", v.ID).Find(&variety).Error
+	err := db.Select([]string{"id", "name", "origin", "specs"}).Where("id = ?", v.ID).Find(&variety).Error
 	return variety, err
 }
 func (v *Variety) Update() (*Variety, error) {
@@ -87,6 +87,6 @@ func (v *Variety) Delete() error {
 		return notFoundErr
 	}
 
-	err := db.Table("commodities").Where("id = ?", v.ID).Update("deleted_at", time.Now()).Error
+	err := db.Table("varieties").Where("id = ?", v.ID).Update("deleted_at", time.Now()).Error
 	return err
 }
