@@ -115,7 +115,6 @@ BEFORE UPDATE ON contacts FOR EACH ROW EXECUTE PROCEDURE update_modified_column(
 CREATE TABLE IF NOT EXISTS trades(
     id UUID PRIMARY KEY NOT NULL,
     company_id UUID NOT NULL,
-    commodity_id UUID NOT NULL,
     variety_id UUID NOT NULL,
     quantity int NOT NULL,
     shipment varchar(255) NOT NULL,
@@ -126,7 +125,6 @@ CREATE TABLE IF NOT EXISTS trades(
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
     FOREIGN KEY (company_id) REFERENCES companies (id),
-    FOREIGN KEY (commodity_id) REFERENCES commodities (id),
     FOREIGN KEY (variety_id) REFERENCES varieties (id)
 );
 
