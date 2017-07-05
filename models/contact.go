@@ -52,13 +52,13 @@ func (c *Contact) Save() error {
 }
 
 // FetchAllContacts returns an array of contacts
-func (c *Contact) FetchAllContacts() ([]Contact, error) {
+func (c *Contact) FetchAllContacts() []Contact {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
 	var contacts []Contact
-	err := db.Select([]string{"id", "name", "position", "office_number", "cell_number", "notes", "company_id"}).Where("deleted_at is null").Find(&contacts).Error
-	return contacts, err
+	db.Select([]string{"id", "name", "position", "office_number", "cell_number", "notes", "company_id"}).Where("deleted_at is null").Find(&contacts)
+	return contacts
 }
 
 // FetchOne returns one record of contact based on record ID
