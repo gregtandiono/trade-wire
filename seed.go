@@ -129,3 +129,21 @@ func seedVarieties(t *testing.T) {
 		WithHeader("Authorization", "Bearer "+au["token"]).
 		WithJSON(v["validVarietyRecord2"]).Expect().Status(200)
 }
+
+func seedContacts(t *testing.T) {
+	app := irisHandler()
+	e := httptest.New(app, t)
+	au := fetchToken(app, t)
+
+	e.POST("/contacts").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(map[string]string{
+			"id":            "4ce32ff4-7fe3-49b9-b40b-d4b3a782696d",
+			"name":          "Dewi Tjandra",
+			"position":      "Head of Operations",
+			"office_number": "+622178291827",
+			"cell_number":   "+628117920029",
+			"notes":         "lorem ipsum dolor sit amet",
+			"company_id":    "f40e4dd4-f441-428b-8ff3-f893cb176819",
+		})
+}
