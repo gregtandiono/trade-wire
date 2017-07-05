@@ -17,6 +17,7 @@ func seedDataBase(t *testing.T) {
 	destroyTables()
 	seedUsers(t)
 	seedCompanies(t)
+	seedContacts(t)
 	seedCommodities(t)
 	seedVarieties(t)
 }
@@ -145,5 +146,20 @@ func seedContacts(t *testing.T) {
 			"cell_number":   "+628117920029",
 			"notes":         "lorem ipsum dolor sit amet",
 			"company_id":    "f40e4dd4-f441-428b-8ff3-f893cb176819",
-		})
+		}).Expect().Status(200)
+
+	for i := 0; i < 5; i++ {
+		e.POST("/contacts").
+			WithHeader("Authorization", "Bearer "+au["token"]).
+			WithJSON(map[string]string{
+				"id":            uuid.NewV4().String(),
+				"name":          randomdata.SillyName(),
+				"position":      randomdata.Adjective(),
+				"office_number": "+622178291827",
+				"cell_number":   "+628117920029",
+				"notes":         "lorem ipsum dolor sit amet",
+				"company_id":    "f40e4dd4-f441-428b-8ff3-f893cb176819",
+			}).Expect().Status(200)
+
+	}
 }

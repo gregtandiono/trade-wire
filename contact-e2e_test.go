@@ -33,32 +33,32 @@ func TestContactHandler(t *testing.T) {
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().
 		Status(200).JSON().Array().Length().
-		Equal(32)
+		Equal(7)
 
 	// A user should be able to fetch a buyer
-	companyObj := e.GET("/contacts/f40e4dd4-f441-428b-8ff3-f893cb176819").
+	contactObj := e.GET("/contacts/4ce32ff4-7fe3-49b9-b40b-d4b3a782696d").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().
 		Status(200).JSON().Object()
 
-	companyObj.Value("name").Equal("Japfa Comfeed Indonesia")
+	contactObj.Value("name").Equal("Dewi Tjandra")
 
 	// A user should be able to update an existing buyer record
-	companyUpdatedRecord := e.PUT("/contacts/f40e4dd4-f441-428b-8ff3-f893cb176819").
+	contactUpdatedRecord := e.PUT("/contacts/4ce32ff4-7fe3-49b9-b40b-d4b3a782696d").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		WithJSON(map[string]string{
-			"name": "Japfa Comfeed Indonesia Tbk.",
+			"name": "Dicky",
 		}).
 		Expect().
 		Status(200).JSON().Object()
 
-	companyUpdatedRecord.Value("name").Equal("Japfa Comfeed Indonesia Tbk.")
+	contactUpdatedRecord.Value("name").Equal("Dicky")
 
 	// A user should be able to soft delete a buyer record
-	e.DELETE("/contacts/f40e4dd4-f441-428b-8ff3-f893cb176819").
+	e.DELETE("/contacts/4ce32ff4-7fe3-49b9-b40b-d4b3a782696d").
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().
 		Status(200).JSON().Equal(map[string]string{
-		"message": "company record successfully deleted",
+		"message": "record successfully deleted",
 	})
 }
