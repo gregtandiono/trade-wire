@@ -17,6 +17,7 @@ func seedDataBase(t *testing.T) {
 	destroyTables()
 	seedUsers(t)
 	seedCompanies(t)
+	seedContacts(t)
 	seedCommodities(t)
 	seedVarieties(t)
 }
@@ -128,4 +129,37 @@ func seedVarieties(t *testing.T) {
 	e.POST("/varieties").
 		WithHeader("Authorization", "Bearer "+au["token"]).
 		WithJSON(v["validVarietyRecord2"]).Expect().Status(200)
+}
+
+func seedContacts(t *testing.T) {
+	app := irisHandler()
+	e := httptest.New(app, t)
+	au := fetchToken(app, t)
+
+	e.POST("/contacts").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(map[string]string{
+			"id":            "4ce32ff4-7fe3-49b9-b40b-d4b3a782696d",
+			"name":          "Dewi Tjandra",
+			"position":      "Head of Operations",
+			"office_number": "+622178291827",
+			"cell_number":   "+628117920029",
+			"notes":         "lorem ipsum dolor sit amet",
+			"company_id":    "f40e4dd4-f441-428b-8ff3-f893cb176819",
+		}).Expect().Status(200)
+
+	for i := 0; i < 5; i++ {
+		e.POST("/contacts").
+			WithHeader("Authorization", "Bearer "+au["token"]).
+			WithJSON(map[string]string{
+				"id":            uuid.NewV4().String(),
+				"name":          randomdata.SillyName(),
+				"position":      randomdata.Adjective(),
+				"office_number": "+622178291827",
+				"cell_number":   "+628117920029",
+				"notes":         "lorem ipsum dolor sit amet",
+				"company_id":    "f40e4dd4-f441-428b-8ff3-f893cb176819",
+			}).Expect().Status(200)
+
+	}
 }
