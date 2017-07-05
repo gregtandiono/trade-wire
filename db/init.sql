@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS trades(
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
     FOREIGN KEY (company_id) REFERENCES companies (id),
-    FOREIGN KEY (variety_id) REFERENCES varieties (id)
+    FOREIGN KEY (variety_id) REFERENCES varieties (id),
     FOREIGN KEY (vessel_id) REFERENCES vessels (id)
 );
 
