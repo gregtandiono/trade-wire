@@ -7,7 +7,6 @@ DROP TABLE IF EXISTS varieties CASCADE;
 DROP TABLE IF EXISTS vessels CASCADE;
 DROP TABLE IF EXISTS trades CASCADE;
 DROP TABLE IF EXISTS contacts CASCADE;
-DROP TABLE IF EXISTS tracking CASCADE;
 
 -- DROP TRIGGERS
 
@@ -18,7 +17,6 @@ DROP TRIGGER IF EXISTS update_modified_column ON varieties;
 DROP TRIGGER IF EXISTS update_modified_column ON vessels;
 DROP TRIGGER IF EXISTS update_modified_column ON trades;
 DROP TRIGGER IF EXISTS update_modified_column ON contacts;
-DROP TRIGGER IF EXISTS update_modified_column ON tracking;
 
 -- DROP TYPES
 
@@ -150,19 +148,3 @@ CREATE TABLE IF NOT EXISTS trades(
 
 CREATE TRIGGER update_modified_column
 BEFORE UPDATE ON trades FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
-
-
-CREATE TABLE IF NOT EXISTS tracking(
-    id UUID PRIMARY KEY NOT NULL,
-    trade_id UUID NOT NULL,
-    vessel jsonb,
-    documents jsonb,
-    notes varchar(255),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    deleted_at TIMESTAMP WITH TIME ZONE,
-    FOREIGN KEY (trade_id) REFERENCES trades (id)
-);
-
-CREATE TRIGGER update_modified_column
-BEFORE UPDATE ON tracking FOR EACH ROW EXECUTE PROCEDURE update_modified_column();

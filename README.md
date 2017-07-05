@@ -37,21 +37,19 @@ ENV=TEST go test ./...
 ### Server
 
 - [x] User model
-- [x] Buyer model
 - [x] Commodity model
-- [ ] Variety model
-- [ ] Supplier model
+- [x] Variety model
+- [x] Company model
 - [ ] Trade model
-- [ ] Contact model
-- [ ] Tracking model
+- [x] Contact model
+- [ ] Vessel model
 - [x] User controller
-- [x] Buyer controller 
 - [x] Commodity controller
-- [ ] Variety controller
-- [ ] Supplier controller
+- [x] Variety controller
+- [x] Company controller
 - [ ] Trade controller
-- [ ] Contact controller
-- [ ] Tracking controller
+- [x] Contact controller
+- [ ] Vessel controller
 - [ ] Model validation for incoming requests
 - [x] Auth
 - [ ] Unit tests
