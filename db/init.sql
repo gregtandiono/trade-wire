@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS trades(
     vessel_id UUID,
     quantity int NOT NULL,
     bl_quantity int,
-    shipment varchar(255) NOT NULL,
+    shipment tstzrange NOT NULL,
     price int NOT NULL,
     price_note varchar (255),
     status varchar(255),
