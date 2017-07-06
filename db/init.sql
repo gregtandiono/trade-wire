@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS trades(
     id UUID PRIMARY KEY NOT NULL,
     company_id UUID NOT NULL,
     variety_id UUID NOT NULL,
-    vessel_id UUID NOT NULL,
+    vessel_id UUID,
     quantity int NOT NULL,
     bl_quantity int,
     shipment varchar(255) NOT NULL,
