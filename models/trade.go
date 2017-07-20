@@ -12,13 +12,13 @@ type Trade struct {
 	CompanyID  uuid.UUID `json:"company_id"`
 	VarietyID  uuid.UUID `json:"variety_id"`
 	VesselID   uuid.UUID `json:"vessel_id"`
-	Quantity   int
-	BLQuantity int
-	Shipment   string
-	Price      int
-	PriceNote  string
-	Status     string
-	Note       string
+	Quantity   int       `json:"quantity"`
+	BLQuantity int       `json:"bl_quantity"`
+	Shipment   string    `json:"shipment"`
+	Price      int       `json:"price"`
+	PriceNote  string    `json:"price_note"`
+	Status     string    `json:"status"`
+	Note       string    `json:"note"`
 }
 
 // NewTrade returns a new instance of Trade struct
@@ -63,16 +63,19 @@ func (t *Trade) Save() error {
 	return err
 }
 
-//
-// // FetchAllVessels returns an array of vessel records
-// func (v *Vessel) FetchAllVessels() ([]Vessel, error) {
-// 	db := adaptors.DBConnector()
-// 	defer db.Close()
-//
-// 	var vessels []Vessel
-// 	err := db.Select([]string{"id", "name", "beam", "loa", "draft", "status"}).Where("deleted_at is null").Find(&vessels).Error
-// 	return vessels, err
-// }
+// FetchAllTrades returns an array of vessel records
+func (v *Vessel) FetchAllTrades() ([]Trade, error) {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	var trades []Trade
+	err := db.Select([]string{
+		"id", "company_id", "variety_id",
+		"vessel_id", "quantity", "bl_quantity", "shipment", "price",
+		"price_note", "status", "note"}).Where("deleted_at is null").Find(&trades).Error
+	return trades, err
+}
+
 //
 // // FetchOne returns one vessel record based on id as search param
 // func (v *Vessel) FetchOne() (Vessel, error) {
