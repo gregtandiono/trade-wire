@@ -103,6 +103,15 @@ func irisHandler() *iris.Application {
 		vessels.Delete("/:id", controller.NewVesselController().Delete)
 	}
 
+	trades := app.Party("/trades", myJwtMiddleware.Serve)
+	{
+		trades.Post("", controller.NewTradeController().Save)
+		trades.Get("", controller.NewTradeController().FetchAll)
+		trades.Get("/:id", controller.NewTradeController().FetchOne)
+		trades.Put("/:id", controller.NewTradeController().Update)
+		trades.Delete("/:id", controller.NewTradeController().Delete)
+	}
+
 	return app
 }
 
