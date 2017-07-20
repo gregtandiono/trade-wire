@@ -1,6 +1,7 @@
 package models
 
 import (
+	"time"
 	"trade-wire/adaptors"
 
 	uuid "github.com/satori/go.uuid"
@@ -64,7 +65,7 @@ func (t *Trade) Save() error {
 }
 
 // FetchAllTrades returns an array of vessel records
-func (v *Vessel) FetchAllTrades() ([]Trade, error) {
+func (t *Trade) FetchAllTrades() ([]Trade, error) {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
@@ -76,42 +77,44 @@ func (v *Vessel) FetchAllTrades() ([]Trade, error) {
 	return trades, err
 }
 
-//
-// // FetchOne returns one vessel record based on id as search param
-// func (v *Vessel) FetchOne() (Vessel, error) {
-// 	db := adaptors.DBConnector()
-// 	defer db.Close()
-//
-// 	var vessel Vessel
-// 	err := db.Select([]string{"id", "name", "beam", "loa", "draft", "status"}).Where("id = ?", v.ID).Find(&vessel).Error
-// 	return vessel, err
-// }
-//
-// // Update updates a vessel record in the db based on id
-// func (v *Vessel) Update() (*Vessel, error) {
-// 	db := adaptors.DBConnector()
-// 	defer db.Close()
-//
-// 	_, notFoundErr := v.FetchOne()
-//
-// 	if notFoundErr != nil {
-// 		return v, notFoundErr
-// 	}
-//
-// 	err := db.Table("vessels").Where("id = ?", v.ID).Updates(&v).Error
-// 	return v, err
-// }
-//
-// // Delete updates a records `deleted_at` column. Soft deletes
-// func (v *Vessel) Delete() error {
-// 	db := adaptors.DBConnector()
-// 	defer db.Close()
-//
-// 	_, notFoundErr := v.FetchOne()
-// 	if notFoundErr != nil {
-// 		return notFoundErr
-// 	}
-//
-// 	err := db.Table("commodities").Where("id = ?", v.ID).Update("deleted_at", time.Now()).Error
-// 	return err
-// }
+// FetchOne returns one trade record based on id as search param
+func (t *Trade) FetchOne() (Trade, error) {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	var trade Trade
+	err := db.Select([]string{
+		"id", "company_id", "variety_id",
+		"vessel_id", "quantity", "bl_quantity", "shipment", "price",
+		"price_note", "status", "note"}).Where("id = ?", t.ID).Find(&trade).Error
+	return trade, err
+}
+
+// Update updates a vessel record in the db based on id
+func (t *Trade) Update() (*Trade, error) {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	_, notFoundErr := t.FetchOne()
+
+	if notFoundErr != nil {
+		return t, notFoundErr
+	}
+
+	err := db.Table("trades").Where("id = ?", t.ID).Updates(&t).Error
+	return t, err
+}
+
+// Delete updates a record's `deleted_at` column. Soft deletes
+func (t *Trade) Delete() error {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	_, notFoundErr := t.FetchOne()
+	if notFoundErr != nil {
+		return notFoundErr
+	}
+
+	err := db.Table("trades").Where("id = ?", t.ID).Update("deleted_at", time.Now()).Error
+	return err
+}

@@ -91,6 +91,6 @@ func (v *Vessel) Delete() error {
 		return notFoundErr
 	}
 
-	err := db.Table("commodities").Where("id = ?", v.ID).Update("deleted_at", time.Now()).Error
+	err := db.Table("trades").Where("id = ?", v.ID).Update("deleted_at", time.Now()).Error
 	return err
 }
