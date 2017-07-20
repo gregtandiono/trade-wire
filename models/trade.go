@@ -1,6 +1,10 @@
 package models
 
-import uuid "github.com/satori/go.uuid"
+import (
+	"trade-wire/adaptors"
+
+	uuid "github.com/satori/go.uuid"
+)
 
 // Trade model struct
 type Trade struct {
@@ -14,36 +18,51 @@ type Trade struct {
 	Price      int
 	PriceNote  string
 	Status     string
+	Note       string
 }
 
-// // NewVessel returns a new instance of Vessel struct
-// func NewVessel(id uuid.UUID, name, beam, loa, draft, status string) *Vessel {
-// 	return &Vessel{
-// 		ID:     id,
-// 		Name:   name,
-// 		Beam:   beam,
-// 		LOA:    loa,
-// 		Draft:  draft,
-// 		Status: status,
-// 	}
-// }
-//
-// // Save creates a new vessel record in the db
-// func (v *Vessel) Save() error {
-// 	db := adaptors.DBConnector()
-// 	defer db.Close()
-//
-// 	err := db.Table("vessels").Create(&Vessel{
-// 		v.ID,
-// 		v.Name,
-// 		v.Beam,
-// 		v.LOA,
-// 		v.Draft,
-// 		v.Status,
-// 	}).Error
-//
-// 	return err
-// }
+// NewTrade returns a new instance of Trade struct
+func NewTrade(
+	id, companyID, varietyID, vesselID uuid.UUID,
+	quantity, blQuantity, price int,
+	shipment, priceNote, status, note string) *Trade {
+	return &Trade{
+		ID:         id,
+		CompanyID:  companyID,
+		VarietyID:  varietyID,
+		VesselID:   vesselID,
+		Quantity:   quantity,
+		BLQuantity: blQuantity,
+		Shipment:   shipment,
+		Price:      price,
+		PriceNote:  priceNote,
+		Status:     status,
+		Note:       note,
+	}
+}
+
+// Save creates a new Trade record in the db
+func (t *Trade) Save() error {
+	db := adaptors.DBConnector()
+	defer db.Close()
+
+	err := db.Table("trades").Create(&Trade{
+		t.ID,
+		t.CompanyID,
+		t.VarietyID,
+		t.VesselID,
+		t.Quantity,
+		t.BLQuantity,
+		t.Shipment,
+		t.Price,
+		t.PriceNote,
+		t.Status,
+		t.Note,
+	}).Error
+
+	return err
+}
+
 //
 // // FetchAllVessels returns an array of vessel records
 // func (v *Vessel) FetchAllVessels() ([]Vessel, error) {
