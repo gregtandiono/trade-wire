@@ -7,7 +7,7 @@ import (
 )
 
 // GetEnvironmentVariables returns config based on your set environment
-// run `ENV=DEV go run ...` on root directory
+// run `ENV=DEV go run ./...` on root directory
 func GetEnvironmentVariables() (port string, hashString string, db map[string]string) {
 	env := os.Getenv("ENV")
 	viper.SetConfigName("app")
