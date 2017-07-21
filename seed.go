@@ -79,6 +79,15 @@ func seedCompanies(t *testing.T) {
 		WithJSON(b["validBuyerRecord"]).
 		Expect().Status(200)
 
+	e.POST("/companies").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(map[string]string{
+			"id":           "a6ad2ccd-925b-433c-adfd-d2d01c06bce0",
+			"name":         "Lansing Trade Group",
+			"address":      "10975 Benson Drive, Suite 400 Overland Park, KS 66210",
+			"company_type": "supplier",
+		}).Expect().Status(200)
+
 	for i := 0; i < 20; i++ {
 		e.POST("/companies").
 			WithHeader("Authorization", "Bearer "+au["token"]).
@@ -203,7 +212,17 @@ func seedTrades(t *testing.T) {
 	e.POST("/trades").
 		WithHeader("Authorization", "Bearer "+au["token"]).
 		WithJSON(map[string]string{
-			"id":         "f22a008d-3471-41b7-9b9a-4723d0b13239",
-			"company_id": "",
+			"id":          "f22a008d-3471-41b7-9b9a-4723d0b13239",
+			"buyer_id":    "f40e4dd4-f441-428b-8ff3-f893cb17681",
+			"supplier_id": "a6ad2ccd-925b-433c-adfd-d2d01c06bce0",
+			"variety_id":  "8f071b7e-555e-4c73-b9dd-2a86da728d32",
+			"vessel_id":   "",
+			"quantity":    "7000",
+			"bl_quantity": "7135",
+			"shipment":    "[2017-07-20T16:03:29+07:00, 2017-07-20T16:03:32+07:00",
+			"price":       "223",
+			"price_note":  "lorem",
+			"status":      "sale concluded",
+			"notes":       "lorem ipsum dolor sit amet",
 		}).Expect().Status(200)
 }

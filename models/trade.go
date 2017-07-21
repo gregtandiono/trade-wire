@@ -10,8 +10,8 @@ import (
 // Trade model struct
 type Trade struct {
 	ID         uuid.UUID `json:"id"`
-	BuyerID    uuid.UUID `json:"company_id"`
-	SupplierID uuid.UUID `json:"company_id"`
+	BuyerID    uuid.UUID `json:"buyer_id"`
+	SupplierID uuid.UUID `json:"supplier_id"`
 	VarietyID  uuid.UUID `json:"variety_id"`
 	VesselID   uuid.UUID `json:"vessel_id"`
 	Quantity   int       `json:"quantity"`
