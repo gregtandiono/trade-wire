@@ -13,14 +13,15 @@ type Trade struct {
 	BuyerID    uuid.UUID `json:"buyer_id"`
 	SupplierID uuid.UUID `json:"supplier_id"`
 	VarietyID  uuid.UUID `json:"variety_id"`
-	VesselID   uuid.UUID `json:"vessel_id"`
-	Quantity   int       `json:"quantity"`
-	BLQuantity int       `json:"bl_quantity"`
-	Shipment   string    `json:"shipment"`
-	Price      int       `json:"price"`
-	PriceNote  string    `json:"price_note"`
-	Status     string    `json:"status"`
-	Notes      string    `json:"notes"`
+	// VesselID   *string   `json:"vessel_id"`
+	VesselID   *uuid.UUID `json:"vessel_id"`
+	Quantity   int        `json:"quantity"`
+	BLQuantity int        `json:"bl_quantity"`
+	Shipment   string     `json:"shipment"`
+	Price      int        `json:"price"`
+	PriceNote  string     `json:"price_note"`
+	Status     string     `json:"status"`
+	Notes      string     `json:"notes"`
 }
 
 // NewTrade returns a new instance of Trade struct
