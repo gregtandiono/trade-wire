@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS trades(
     price int NOT NULL,
     price_note varchar (255),
     status varchar(255),
+    notes varchar(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
