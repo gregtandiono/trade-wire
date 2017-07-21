@@ -20,6 +20,8 @@ func seedDataBase(t *testing.T) {
 	seedContacts(t)
 	seedCommodities(t)
 	seedVarieties(t)
+	seedVessels(t)
+	seedTrades(t)
 }
 
 func destroyTables() {
@@ -44,6 +46,7 @@ func destroyTables() {
 }
 
 func seedUsers(t *testing.T) {
+	fmt.Println("#### Seeding Users")
 	app := irisHandler()
 	e := httptest.New(app, t)
 
@@ -67,6 +70,7 @@ func seedUsers(t *testing.T) {
 }
 
 func seedCompanies(t *testing.T) {
+	fmt.Println("#### Seeding Companies")
 	app := irisHandler()
 	e := httptest.New(app, t)
 	b := fixtures.BuyerFixtures()
@@ -112,6 +116,7 @@ func seedCompanies(t *testing.T) {
 }
 
 func seedCommodities(t *testing.T) {
+	fmt.Println("#### Seeding Commodities")
 	app := irisHandler()
 	e := httptest.New(app, t)
 	au := fetchToken(app, t)
@@ -127,6 +132,7 @@ func seedCommodities(t *testing.T) {
 }
 
 func seedVarieties(t *testing.T) {
+	fmt.Println("#### Seeding Varieties")
 	app := irisHandler()
 	e := httptest.New(app, t)
 	au := fetchToken(app, t)
@@ -142,6 +148,7 @@ func seedVarieties(t *testing.T) {
 }
 
 func seedContacts(t *testing.T) {
+	fmt.Println("#### Seeding Contacts")
 	app := irisHandler()
 	e := httptest.New(app, t)
 	au := fetchToken(app, t)
@@ -175,6 +182,7 @@ func seedContacts(t *testing.T) {
 }
 
 func seedVessels(t *testing.T) {
+	fmt.Println("#### Seeding Vessels")
 	app := irisHandler()
 	e := httptest.New(app, t)
 	au := fetchToken(app, t)
@@ -190,7 +198,7 @@ func seedVessels(t *testing.T) {
 			"status": "berth at loading port",
 		}).Expect().Status(200)
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 3; i++ {
 		e.POST("/vessels").
 			WithHeader("Authorization", "Bearer "+au["token"]).
 			WithJSON(map[string]string{
@@ -205,24 +213,25 @@ func seedVessels(t *testing.T) {
 }
 
 func seedTrades(t *testing.T) {
+	fmt.Println("#### Seeding Trades")
 	app := irisHandler()
 	e := httptest.New(app, t)
 	au := fetchToken(app, t)
 
 	e.POST("/trades").
 		WithHeader("Authorization", "Bearer "+au["token"]).
-		WithJSON(map[string]string{
-			"id":          "f22a008d-3471-41b7-9b9a-4723d0b13239",
-			"buyer_id":    "f40e4dd4-f441-428b-8ff3-f893cb17681",
+		WithJSON(map[string]interface{}{
+			"id":          "73fb6074-956b-403a-805a-8333783bb314",
+			"buyer_id":    "f40e4dd4-f441-428b-8ff3-f893cb176819",
 			"supplier_id": "a6ad2ccd-925b-433c-adfd-d2d01c06bce0",
 			"variety_id":  "8f071b7e-555e-4c73-b9dd-2a86da728d32",
-			"vessel_id":   "",
-			"quantity":    "7000",
-			"bl_quantity": "7135",
-			"shipment":    "[2017-07-20T16:03:29+07:00, 2017-07-20T16:03:32+07:00",
-			"price":       "223",
+			"quantity":    7000,
+			"bl_quantity": 7135,
+			"shipment":    "[2017-07-20T16:03:29+07:00, 2017-07-20T16:03:32+07:00]",
+			"price":       223,
 			"price_note":  "lorem",
 			"status":      "sale concluded",
 			"notes":       "lorem ipsum dolor sit amet",
 		}).Expect().Status(200)
+
 }
