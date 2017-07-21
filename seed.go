@@ -27,9 +27,10 @@ func destroyTables() {
 	defer db.Close()
 
 	tables := []string{
-		"tracking",
-		"contacts",
 		"trades",
+		"vessels",
+		"contacts",
+		"companies",
 		"varieties",
 		"commodities",
 		"companies",
@@ -162,4 +163,37 @@ func seedContacts(t *testing.T) {
 			}).Expect().Status(200)
 
 	}
+}
+
+func seedVessels(t *testing.T) {
+	app := irisHandler()
+	e := httptest.New(app, t)
+	au := fetchToken(app, t)
+
+	e.POST("/vessels").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(map[string]string{
+			"id":     "f39165b1-15ba-412e-822c-419d508a7348",
+			"name":   "MV Marlin",
+			"beam":   "22.4",
+			"loa":    "18",
+			"draft":  "11m",
+			"status": "berth at loading port",
+		}).Expect().Status(200)
+
+	for i := 0; i < 5; i++ {
+		e.POST("/vessels").
+			WithHeader("Authorization", "Bearer "+au["token"]).
+			WithJSON(map[string]string{
+				"id":     uuid.NewV4().String(),
+				"name":   randomdata.SillyName(),
+				"beam":   "22.4",
+				"loa":    "18",
+				"draft":  "11",
+				"status": "berth at loading port",
+			}).Expect().Status(200)
+	}
+}
+
+func seedTrades(t *testing.T) {
 }
