@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 	"trade-wire/adaptors"
 
@@ -26,7 +27,10 @@ type Trade struct {
 
 // NewTrade returns a new instance of Trade struct
 func NewTrade(
-	id, buyerID, supplierID, varietyID, vesselID uuid.UUID,
+	// id, buyerID, supplierID, varietyID uuid.UUID,
+	// vesselID *string,
+	id, buyerID, supplierID, varietyID uuid.UUID,
+	vesselID *uuid.UUID,
 	quantity, blQuantity, price int,
 	shipment, priceNote, status, notes string) *Trade {
 	return &Trade{
@@ -50,6 +54,7 @@ func (t *Trade) Save() error {
 	db := adaptors.DBConnector()
 	defer db.Close()
 
+	fmt.Print(t.VesselID)
 	err := db.Table("trades").Create(&Trade{
 		t.ID,
 		t.BuyerID,
