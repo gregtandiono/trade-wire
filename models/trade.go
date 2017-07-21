@@ -19,14 +19,14 @@ type Trade struct {
 	Price      int       `json:"price"`
 	PriceNote  string    `json:"price_note"`
 	Status     string    `json:"status"`
-	Note       string    `json:"note"`
+	Notes      string    `json:"notes"`
 }
 
 // NewTrade returns a new instance of Trade struct
 func NewTrade(
 	id, companyID, varietyID, vesselID uuid.UUID,
 	quantity, blQuantity, price int,
-	shipment, priceNote, status, note string) *Trade {
+	shipment, priceNote, status, notes string) *Trade {
 	return &Trade{
 		ID:         id,
 		CompanyID:  companyID,
@@ -38,7 +38,7 @@ func NewTrade(
 		Price:      price,
 		PriceNote:  priceNote,
 		Status:     status,
-		Note:       note,
+		Notes:      notes,
 	}
 }
 
@@ -58,7 +58,7 @@ func (t *Trade) Save() error {
 		t.Price,
 		t.PriceNote,
 		t.Status,
-		t.Note,
+		t.Notes,
 	}).Error
 
 	return err
@@ -73,7 +73,7 @@ func (t *Trade) FetchAllTrades() ([]Trade, error) {
 	err := db.Select([]string{
 		"id", "company_id", "variety_id",
 		"vessel_id", "quantity", "bl_quantity", "shipment", "price",
-		"price_note", "status", "note"}).Where("deleted_at is null").Find(&trades).Error
+		"price_note", "status", "notes"}).Where("deleted_at is null").Find(&trades).Error
 	return trades, err
 }
 
@@ -86,7 +86,7 @@ func (t *Trade) FetchOne() (Trade, error) {
 	err := db.Select([]string{
 		"id", "company_id", "variety_id",
 		"vessel_id", "quantity", "bl_quantity", "shipment", "price",
-		"price_note", "status", "note"}).Where("id = ?", t.ID).Find(&trade).Error
+		"price_note", "status", "notes"}).Where("id = ?", t.ID).Find(&trade).Error
 	return trade, err
 }
 
