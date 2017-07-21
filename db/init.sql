@@ -129,7 +129,8 @@ BEFORE UPDATE ON vessels FOR EACH ROW EXECUTE PROCEDURE update_modified_column()
 
 CREATE TABLE IF NOT EXISTS trades(
     id UUID PRIMARY KEY NOT NULL,
-    company_id UUID NOT NULL,
+    buyer_id UUID NOT NULL,
+    supplier_id UUID NOT NULL,
     variety_id UUID NOT NULL,
     vessel_id UUID,
     quantity int NOT NULL,
@@ -142,7 +143,8 @@ CREATE TABLE IF NOT EXISTS trades(
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     modified TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted_at TIMESTAMP WITH TIME ZONE,
-    FOREIGN KEY (company_id) REFERENCES companies (id),
+    FOREIGN KEY (buyer_id) REFERENCES companies (id),
+    FOREIGN KEY (supplier_id) REFERENCES companies (id),
     FOREIGN KEY (variety_id) REFERENCES varieties (id),
     FOREIGN KEY (vessel_id) REFERENCES vessels (id)
 );

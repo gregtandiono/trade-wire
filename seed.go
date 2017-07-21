@@ -196,4 +196,14 @@ func seedVessels(t *testing.T) {
 }
 
 func seedTrades(t *testing.T) {
+	app := irisHandler()
+	e := httptest.New(app, t)
+	au := fetchToken(app, t)
+
+	e.POST("/trades").
+		WithHeader("Authorization", "Bearer "+au["token"]).
+		WithJSON(map[string]string{
+			"id":         "f22a008d-3471-41b7-9b9a-4723d0b13239",
+			"company_id": "",
+		}).Expect().Status(200)
 }

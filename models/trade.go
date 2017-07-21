@@ -10,7 +10,8 @@ import (
 // Trade model struct
 type Trade struct {
 	ID         uuid.UUID `json:"id"`
-	CompanyID  uuid.UUID `json:"company_id"`
+	BuyerID    uuid.UUID `json:"company_id"`
+	SupplierID uuid.UUID `json:"company_id"`
 	VarietyID  uuid.UUID `json:"variety_id"`
 	VesselID   uuid.UUID `json:"vessel_id"`
 	Quantity   int       `json:"quantity"`
@@ -24,12 +25,13 @@ type Trade struct {
 
 // NewTrade returns a new instance of Trade struct
 func NewTrade(
-	id, companyID, varietyID, vesselID uuid.UUID,
+	id, buyerID, supplierID, varietyID, vesselID uuid.UUID,
 	quantity, blQuantity, price int,
 	shipment, priceNote, status, notes string) *Trade {
 	return &Trade{
 		ID:         id,
-		CompanyID:  companyID,
+		BuyerID:    buyerID,
+		SupplierID: supplierID,
 		VarietyID:  varietyID,
 		VesselID:   vesselID,
 		Quantity:   quantity,
@@ -49,7 +51,8 @@ func (t *Trade) Save() error {
 
 	err := db.Table("trades").Create(&Trade{
 		t.ID,
-		t.CompanyID,
+		t.BuyerID,
+		t.SupplierID,
 		t.VarietyID,
 		t.VesselID,
 		t.Quantity,
@@ -71,7 +74,7 @@ func (t *Trade) FetchAllTrades() ([]Trade, error) {
 
 	var trades []Trade
 	err := db.Select([]string{
-		"id", "company_id", "variety_id",
+		"id", "buyer_id", "supplier_id", "variety_id",
 		"vessel_id", "quantity", "bl_quantity", "shipment", "price",
 		"price_note", "status", "notes"}).Where("deleted_at is null").Find(&trades).Error
 	return trades, err
@@ -84,7 +87,7 @@ func (t *Trade) FetchOne() (Trade, error) {
 
 	var trade Trade
 	err := db.Select([]string{
-		"id", "company_id", "variety_id",
+		"id", "buyer_id", "supplier_id", "variety_id",
 		"vessel_id", "quantity", "bl_quantity", "shipment", "price",
 		"price_note", "status", "notes"}).Where("id = ?", t.ID).Find(&trade).Error
 	return trade, err

@@ -25,7 +25,8 @@ func (tc *TradeController) Save(ctx context.Context) {
 
 	t := models.NewTrade(
 		trade.ID,
-		trade.CompanyID,
+		trade.BuyerID,
+		trade.SupplierID,
 		trade.VarietyID,
 		trade.VesselID,
 		trade.Quantity,
