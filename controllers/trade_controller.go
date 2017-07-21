@@ -34,7 +34,7 @@ func (tc *TradeController) Save(ctx context.Context) {
 		trade.Shipment,
 		trade.PriceNote,
 		trade.Status,
-		trade.Note,
+		trade.Notes,
 	)
 
 	err := t.Save()
