@@ -30,7 +30,7 @@ func TestCompanyHandler(t *testing.T) {
 		WithHeader("Authorization", "Bearer "+aro["token"]).
 		Expect().
 		Status(200).JSON().Array().Length().
-		Equal(32)
+		Equal(33)
 
 	// A user should be able to fetch a buyer
 	companyObj := e.GET("/companies/f40e4dd4-f441-428b-8ff3-f893cb176819").
